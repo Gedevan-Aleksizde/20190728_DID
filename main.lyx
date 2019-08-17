@@ -524,7 +524,7 @@ pulation-health-methods/difference-difference-estimation)), A/B テストに限�
 
 で表せる.
  実際には, 処置群・対照群にはそれぞれ1件ぶんのデータしかないということはありえない.
- A/Bテストでは, 数百件か, あるいは数万件かのトランザクションに対してそれぞれのグループいずれかに割り当てている.
+ A/Bテストでは, 数百件か, あるいは数万件かの個体 (Webならアクセス単位ということになるだろう) に対してそれぞれのグループいずれかに割り当てている.
  そこで, これらのデータの平均をとって求めることになる.
 \begin_inset Formula 
 \begin{align*}
@@ -609,7 +609,7 @@ DID のまとめ
 \end_layout
 
 \begin_layout Itemize
-差の差推定法 (DID) は, 施策の前後の差をとり, さらに施策の有無で差をとることで因果効果を推定する方法論である.
+差の差推定法 (DID) は, 施策の前後の差をとり, さらに施策の有無で差をとることで介入効果を推定する方法論である.
 \end_layout
 
 \begin_layout Itemize
@@ -635,6 +635,32 @@ DID のまとめ
 \end_layout
 
 \end_deeper
+\begin_layout Paragraph
+時系列と DID 
+\end_layout
+
+\begin_layout Standard
+本来の DID では, 原則として2時点間の差分だけを扱うが, これ以降の説明のため, 時系列の時点を増やしても同様に扱えるということを補足しておく.
+ 当初の DID では, 
+\begin_inset Formula $t=1$
+\end_inset
+
+ つまり処置後の効果を見ていたが, さらに 
+\begin_inset Formula $t=2,t=3$
+\end_inset
+
+ と処置が続くような場合を想定してみる.
+\begin_inset Formula $t=2,3,\cdots$
+\end_inset
+
+ の各時点での介入効果もまた, それぞれの差分をとることで計算できる.
+ 
+\begin_inset Formula $\Delta\bar{y}_{2}(1):=\bar{y}_{2}(1)-\bar{y}_{1}(1),\Delta\bar{y}_{3}(1):=\bar{y}_{3}(1)-\bar{y}_{2}(1),\cdots\Delta y_{t}(D):=\bar{y}_{t}(D)-\bar{y}_{t-1}(D)$
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 シンセティック統制法 (Synthetic Control Method)
 \end_layout
@@ -670,7 +696,7 @@ DID のスキームでは, どのように比較対象を選ぶべきかのル�
 \end_layout
 
 \begin_layout Standard
-このように便利であるが, DID 同様に強い仮定のもとでのみ成り立つ.
+そこで考案された SC 法について解説する.
  
 \begin_inset Formula $t=1,\cdots,T_{0},\cdots,T$
 \end_inset
@@ -941,12 +967,12 @@ y_{1,t}(0)\simeq\sum_{j=2}^{J+1}w_{j}^{\ast}y_{j,t}, & \forall t=1,\cdots,T_{0},
 
 \end_inset
 
-となるような最適な 
+を満たすような
 \begin_inset Formula $\boldsymbol{w}^{\ast}:=\begin{bmatrix}w_{2} & \cdots & w_{J+1}\end{bmatrix}$
 \end_inset
 
- が存在すると仮定する.
- 
+ が存在すると一旦仮定する.
+ このとき, 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:synth"
@@ -962,7 +988,11 @@ noprefix "false"
 
  の重み平均が処置群の結果変数と一致すること, さらに共変量についても対照群の重み平均が処置群に一致することを条件としている.
  これは, 処置群の結果変数だけでなく共変量も対照群の合成で表現できる, という制約条件である.
- 機械学習的な考え方ならば, 結果変数のみに近似させればよいように見えるが, ここでは 
+ 単なるカーブフィッティングの発想ならば, 結果変数 
+\begin_inset Formula $y_{1,t}$
+\end_inset
+
+ のみに近似させればよいように見えるが, ここでは 
 \begin_inset Formula $\boldsymbol{\theta}_{t}$
 \end_inset
 
@@ -970,13 +1000,13 @@ noprefix "false"
 \begin_inset Formula $t=T_{0}+1$
 \end_inset
 
- 以降での処置群の推移を再現できないからである.
+ 以降での処置群の推移を再現できないからである((ただし, 介入の前後で構造的な関係が大きく変化しないという制約は必要である.)).
  つまりこの式は, 共変量を所与とした結果変数の条件分布 
 \begin_inset Formula $p(y_{1,t}\mid\boldsymbol{z})$
 \end_inset
 
- だけでなく, これらの同時分布を線形関数で近似できるというナイーブな仮定を意味している((つまり, 標準的な機械学習の想定とは違い, out-of-sampl
-e で分布が変化することをモデルに織り込んでいる.)).
+ だけでなく, 共変量と結果変数の同時分布も線形関数で近似できるというナイーブな仮定を意味している((つまり, 標準的な機械学習の想定とは違い,
+ out-of-sample で共変量分布が変化することをモデルに織り込んでいる.))とみなせる.
 \end_layout
 
 \begin_layout Standard
@@ -1021,7 +1051,8 @@ e で分布が変化することをモデルに織り込んでいる.)).
 \begin_inset Formula $\boldsymbol{w}^{\ast}$
 \end_inset
 
-求めるかを, 説明を簡単にするために最も前提を簡略化した場合で解説する.処置群・対照群それぞれについて, 共変量 
+求めるかを, 説明を簡単にするために最も前提を簡略化した場合で解説する.
+ 処置群・対照群それぞれについて, 共変量 
 \begin_inset Formula $\boldsymbol{z}_{i}$
 \end_inset
 
@@ -1096,7 +1127,15 @@ noprefix "false"
 \begin_inset Formula $y_{1,t}(0)$
 \end_inset
 
- の不偏推定 (つまり期待値が一致すること) が可能であることまで示されている.
+ の不偏推定 (つまり期待値が一致すること) が可能であることまで 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "abadie2010Synthetic"
+literal "false"
+
+\end_inset
+
+ では示されている.
  一方で標準誤差についても, 強い非線形性がある場合どうするかとか, よりモデルの仮定を緩和した場合についても議論されている.
 \end_layout
 
@@ -1118,12 +1157,12 @@ noprefix "false"
 
 \begin_layout Itemize
 DID では処置群と対照群の選び方について, 諸々の仮定を満足しているかについて定量的な議論が難しかった.
- うがった見方をするなら, 都合のいい結果を得られるように対照群を選ぶ, つまり cherry-picking もできてしまうところ, SC 法では介入前の結果
-変数が両群で同等か, といった定量的な議論に落とし込むことができるようになった.
+ うがった見方をするなら, 都合のいい結果を得られるように対照群を選ぶ, つまり cherry-picking もできてしまうところ, SC 法では対照群の選び
+方を, 介入前の結果変数が両群で同等か, といった定量的な議論に落とし込むことができるようになった.
 \end_layout
 
 \begin_layout Standard
-一方で, 新たに増えた制約としては,
+一方で, 新たに増えた制約としては, 以下2点がある.
 \end_layout
 
 \begin_layout Enumerate
@@ -1134,7 +1173,7 @@ DID では処置群と対照群の選び方について, 諸々の仮定を満�
 \end_layout
 
 \begin_layout Enumerate
-モデル構造の斉一性.
+モデル構造の不変性.
  DID では単なる差分だったが, 
 \begin_inset CommandInset ref
 LatexCommand eqref
@@ -1207,8 +1246,8 @@ literal "false"
 
 \end_inset
 
- が考案した causal impact フレームワークは, ここまでで紹介した DID, SC 法の考え方を踏まえて, ベイズ構造時系列モデルの特性を利用する
-ことでさらに発展させている.
+ が考案した causal impact フレームワークは, ここまでで紹介した DID, SC 法の考え方を踏まえて, ベイズ構造時系列モデルの特性を取り入れ
+ている.
  SC 法では, 介入前までの対照群の結果変数を加重平均することで, 処置群の結果に近似し,
 \end_layout
 
@@ -1311,7 +1350,7 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-CausalImpact が従来のやり方と違うのは, この辺の問題である.
+Causal impact が従来のやり方と違うのは, この辺の問題である.
  bsts パッケージでできるのはデータ内での当てはまりだけを考慮する, 「従来的な機械学習」である.
  よって, bsts によって得られる予測分布関数は, 
 \begin_inset Formula $t$
@@ -1342,6 +1381,11 @@ p(y_{t+1}\mid\{y_{s}\}_{s=1}^{t},\{x_{s}\}_{s=1}^{t+1})
 \end_inset
 
 である.
+\end_layout
+
+\begin_layout Standard
+この観点では, causal impact フレームワークは, 対照群ではなく処置前の処置群のデータから SC 法に基づいて仮想的なシンセティック対照群を生成し
+ているとみなせる.
 \end_layout
 
 \begin_layout Section
@@ -1574,8 +1618,12 @@ literal "false"
 \end_layout
 
 \begin_layout Enumerate
-(無作為性) 共変量に対して割り当て変数 
-\begin_inset Formula $D$
+(無作為性) 共変量 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+ に対して割り当て変数 
+\begin_inset Formula $D(t)$
 \end_inset
 
  は独立している.
