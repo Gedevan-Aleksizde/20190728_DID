@@ -194,7 +194,7 @@ End
 \begin_body
 
 \begin_layout Title
-[R] CausalImpact, その限界と克服
+[R] CausalImpact でできること, できないこと
 \end_layout
 
 \begin_layout Section*
@@ -215,14 +215,13 @@ CausalImpact
 \family default
  は, シンプルで分かりやすい difference in differences (DID) の因果推定理論に基づいており, マーケティングイベントがもたらす
 インパクトを計測するツールとして紹介されている.
- しかし, DID が非常にシンプルであるのは, 厳格な仮定を置いているからであり, 利用する際には多くの注意が伴う.
- そこで今回は, より発展的な理論について説明する.
- なおタイトルに R とつけたが, 
-\series bold
-パッケージの使用法の説明はしない
-\series default
-.
- それは以下で紹介する他の資料を見れば十分である.
+ しかし, DID が非常にシンプルであれるのは, 厳格な仮定を置いているからであり, 利用する際には多くの注意が伴う.
+ そこで今回は, より発展的な理論について考察したことを垂れ流してみる.
+ あとついでに 
+\family typewriter
+tsibble
+\family default
+ パッケージの使い方とかも少しだけ
 \end_layout
 
 \begin_layout Standard
@@ -259,7 +258,7 @@ literal "false"
 
 \begin_layout Standard
 対象読者層は, 企業などで causal impact を使って効果測定をしている人達だろうか.
- なるべく技術的に細かい話は避けたつもりだが, 少なくともまったくの初心者にとっては難しいかも知れないということを留意してほしい.
+ なるべく技術的に細かい話は避け, 要点をよく強調して説明したつもりだが, まったくの初心者にとってはもしかすると難しいかも知れないということを留意してほしい.
 \end_layout
 
 \begin_layout Section
@@ -267,7 +266,16 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-先日, 第80回, Tokyo.R で以下のような発表をした.
+先日, 第80回, 
+\begin_inset CommandInset href
+LatexCommand href
+name "Tokyo.R"
+target "https://tokyor.connpass.com/event/139522/"
+literal "false"
+
+\end_inset
+
+ で以下のような発表をした.
 \end_layout
 
 \begin_layout Standard
@@ -300,6 +308,7 @@ CausalImpact
 \begin_layout Standard
 CausalImpact のしくみを, 日本語で簡単に解説した資料はすでに存在する.
  代表的なものとして, 以下2つがある.
+ いわゆる因果推論の話を少し勉強した人ならば, これらを読んだだけでも何をやっているか察せると思う.
 \end_layout
 
 \begin_layout Standard
@@ -313,15 +322,78 @@ CausalImpact のしくみを, 日本語で簡単に解説した資料はすで�
 
 \begin_layout Standard
 一方で, これらでは触れられていない DID の持つ強い仮定が存在する.
- 今回はその仮定を無視するとどうなるかという話をする.
+ 
+\series bold
+今回主に話したいのは, その仮定を無視するとどうなるかという話である
+\series default
+.
 \end_layout
 
 \begin_layout Standard
-また, この記事によって, はるか昔, 2014年に書いた記事での「今回は DID については書かないが, 暇があれば書く.」という伏線を回収した.
+また, この記事によって, はるか昔, [http://ill-identified.hatenablog.com/entry/2014/12/07/160009:
+title=2014年に書いた記事]での「今回は DID については書かないが, 暇があれば書く.」という伏線を回収した.
 \end_layout
 
 \begin_layout Standard
-[http://ill-identified.hatenablog.com/entry/2014/12/07/160009:embed:title]
+ところで, 下書きを途中まで書いて放置していたら, 以下のようにテーマが丸かぶりの投稿が発生した.
+ しかし, よく読んだら私の主題とあまりかぶってなかったのでこのまま投稿することにする.
+\end_layout
+
+\begin_layout Standard
+[https://tjo.hatenablog.com/entry/2019/09/10/080000:embed:title]
+\end_layout
+
+\begin_layout Standard
+タイミングが重なったのは対抗意識を燃やしているわけではなく, 本当に偶然である
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+計量経済学をかじった人間ならば「見せかけの相関」と理由付けるべきか
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+本稿の以降の構成は, 次の通り: 第2節で, Causal Impact の下地となった方法論である, 
+\series bold
+差の差の推定法
+\series default
+ (DID; Difference in Differences), 
+\series bold
+シンセティック統制法
+\series default
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+この訳語は私の考案したものであり, 少し調べた限りではまだ日本語訳は存在していない.
+ control が統制実験, 対照実験などと訳される control experiment を意味すると思うので, 「シンセティック対照実験法」とか「合成的対
+照実験法」という訳でもよいかもしれない.
+\end_layout
+
+\end_inset
+
+ (SC; Synthetic Control), そして Causal Impact の実装に用いられている
+\series bold
+ベイズ構造時系列モデル
+\series default
+ (BSTS; Bayesian Structural Time Series), 最後に Causal Impact の仕組みを再度, 定式化して説明する.
+ この辺は適当にごまかして説明することもできるので, 
+\series bold
+Causal Impact の実用上の話を知りたいだけならば, それ以前の箇所は飛ばしても問題ない
+\series default
+.
+\end_layout
+
+\begin_layout Standard
+第3節では, Causal Impact の問題設定に由来する, フレームワークの限界について説明する.
+ そして第4節では, 第3節での説明を踏まえた, 簡単なシミュレーションによる事例を紹介する.
+ 第5節では, 以上の内容の要約と, それを踏まえてた発展的な議論をする.
 \end_layout
 
 \begin_layout Section
@@ -329,27 +401,33 @@ CausalImpact のしくみを, 日本語で簡単に解説した資料はすで�
 \end_layout
 
 \begin_layout Standard
-上記の資料, 特に2番目のものでも DID から causal impact に至るまでの議論の解説はされているが, ここではより発展的な話題のため,
- 再度定式化して説明する.
+イントロダクションで紹介した資料の, 特に2番目のものでも DID から causal impact に至るまでの議論の解説はされているが, ここではより発展的
+な話題のため, 因果推論の基本的な考え方, DID, 　SC 法, BSTS について, 再度定式化して説明する.
 \end_layout
 
 \begin_layout Subsection
-Difference in Differences (DID) 推定法
+Rubin 流の因果推論
 \end_layout
 
 \begin_layout Standard
-次に, 実験デザイン理論として
-\series bold
-シンセティック統制法
-\series default
- (synthetic control method)((この訳語は私の考案したものであり, 少し調べた限りではまだ日本語訳は存在していない.
- control が統制実験, 対照実験などと訳される control experiment を意味すると思うので, 「シンセティック対照実験法」「合成的対照実
-験法」という訳でもよいかもしれない.)) を紹介したいが, その前にシンセティック統制法の元になっている差の差 (DID; difference-in-diffe
-rences) 推定法から説明する.
-\end_layout
+今回紹介する Causal Impact は DID の方法論がベースであり, DID は 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "rubin1974Estimating"
+literal "false"
 
-\begin_layout Standard
-DID は歴史が古く, しかもシンプルな発想であり, 
+\end_inset
+
+ の考案した因果推論のフレームワークに則したものである.
+ この因果推論の基本的な考え方については, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "kurosawa2005"
+literal "false"
+
+\end_inset
+
+, 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Hoshino2009"
@@ -373,36 +451,79 @@ literal "false"
 
 \end_inset
 
- など, 解説している教科書は多い.
- DID は, わかりやすく言えば web サービスにおける A/B テストと同様の発想である.
- なんらかの施策を与えたグループと, 与えなかったグループを用意し, KPI を比較することである.
- さらに言えば, もともと DID は保健・公衆衛生学がルーツの概念なので((https://www.mailman.columbia.edu/research/po
-pulation-health-methods/difference-difference-estimation)), A/B テストに限った話でもない.
- web サービスの利用者への施策であったり, 患者への治療措置であったり, 自治体の市民への政策であったり, 様々な事例に応用できる.
- そのため, 以降は用語を一般化して, 施策, 治療, 政策といった行為を
+ が参考になるだろう
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+日本語に限定すれば, 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Hoshino2009"
+literal "false"
+
+\end_inset
+
+, 次いで 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "AngristPischke2009"
+literal "false"
+
+\end_inset
+
+ の邦訳, 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "kurosawa2005"
+literal "false"
+
+\end_inset
+
+が最も詳しい.
+ なお, 黒木学氏や宮川雅巳氏の「構造的因果モデル」や「統計的因果推論」を扱った教科書は, 今回説明する因果推論とはアプローチが異なるため, 今回のテーマに関し
+ては参考書としてはおすすめできない.
+ 今回紹介するフレームワークも「統計的」ではあるのだが, 和書で統計的因果推論というと, Judea Pearl 流のグラフ理論に基づく因果推論フレームワークを
+指すことが多いようだ.
+ よって, Pearl の因果推論を勉強したいのならばこれらの教科書も非常に参考になる.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+患者への治療措置が健康状態をどの程度改善するかであったり, 自治体による政策によって市民の生活がどう向上したかであったり, 様々な事例に応用できる.
+ そのため, これ以降は用語を一般化して, 施策, 治療, 政策といった行為を
 \series bold
 処置
 \series default
  (tretment.
- 介入, intervention と呼ぶ文献も多い) と呼び, 処置を与えたグループ (あるいは A/B テストの A) を
+ 介入, intervention と呼ぶ文献も多い) と呼び, A/B テストの B に相当する, 処置を与えたグループを
 \series bold
 処置群
 \series default
- (treatment group), 施策を与えていないグループ (あるいは A/B テストの B) を
+ (treatment group), A/B テストの A に相当する, 施策を与えていないグループを
 \series bold
 対照群
 \series default
  (control group)と呼ぶ.
- また, KPI など結果を表す変数を, 
+ KPI など結果を表す変数を, 
 \series bold
 結果変数
 \series default
  (outcome) と呼ぶ.
+ 因果推論では, 処置をしたか, しないかによる違いによって発生した効果を
+\series bold
+介入効果
+\series default
+ (interventional effect) と呼び, どうやって介入効果の大きさを推定するかという研究がされている.
 \end_layout
 
 \begin_layout Standard
-結果変数を 
-\begin_inset Formula $y(D)$
+処置された場合, されなかった場合の結果変数をそれぞれ 
+\begin_inset Formula $y_{1},y_{0}$
 \end_inset
 
  とする.
@@ -410,7 +531,7 @@ pulation-health-methods/difference-difference-estimation)), A/B テストに限�
 \begin_inset Formula $y$
 \end_inset
 
- は好きな KPI を想像して良い.
+ に対応するものは, 先ほど挙げたように好きな KPI を想像して良い.
  
 \series bold
 割り当て変数
@@ -419,12 +540,314 @@ pulation-health-methods/difference-difference-estimation)), A/B テストに限�
 \begin_inset Formula $D$
 \end_inset
 
- は1またはゼロをとり, 処置を与えた場合は 
+ は1またはゼロの2通りのみの取りうる変数で, 処置を与えた場合は 
 \begin_inset Formula $1$
 \end_inset
 
 , そうでなければゼロである.
- さらに, 時間を表す記号
+ すると, ある処置による介入効果 (これを特に
+\series bold
+平均処置効果
+\series default
+, ATE という) の大きさは両者の差の期待値,
+\begin_inset Formula 
+\begin{align*}
+\mathit{ATE}:= & \mathrm{E}\left[y_{1}-y_{0}\right]
+\end{align*}
+
+\end_inset
+
+と表現できる.
+ 単純に考えれば, 全ての個体に対して 
+\begin_inset Formula $y_{1}-y_{0}$
+\end_inset
+
+ の差を平均したものが ATE だが, 
+\series bold
+この方法では絶対に計算できない
+\series default
+.
+ 実際に観測できる結果変数は, 割り当て変数 
+\begin_inset Formula $D$
+\end_inset
+
+ に依存するので 
+\begin_inset Formula $y(D)$
+\end_inset
+
+ として以下のように,
+\begin_inset Formula 
+\begin{align*}
+y(D):= & Dy_{1}(D)+(1-D)y_{0}(D)
+\end{align*}
+
+\end_inset
+
+と定義できる.
+ 
+\begin_inset Formula $y(D)$
+\end_inset
+
+ は観測できるが, (
+\begin_inset Formula $D=0$
+\end_inset
+
+) 個体が, 
+\series bold
+現実とは違って, もし仮に
+\series default
+, 処置群に割り当てられていた (
+\begin_inset Formula $D=1$
+\end_inset
+
+) 場合の結果である 
+\begin_inset Formula $y_{1}(0)$
+\end_inset
+
+ と, 逆に処置群に割り当てられていた (
+\begin_inset Formula $D=1$
+\end_inset
+
+) が, 事実とは逆に対照群に割り当てられていた (
+\begin_inset Formula $D=0$
+\end_inset
+
+) 場合の結果 
+\begin_inset Formula $y_{0}(1)$
+\end_inset
+
+ は, 
+\series bold
+絶対に観測できない
+\series default
+ため, 上記は計算できない.
+ つまり, 各個体ごとにある2通りの結果 
+\begin_inset Formula $(y_{i,1}(D),y_{i,0}(D))$
+\end_inset
+
+ について, 現実的にはどちらか片方が常に欠測している.
+ そのため, 
+\begin_inset Formula $\mathrm{E}\left[y_{1}(1)-y_{0}(0)\right]$
+\end_inset
+
+ と 
+\begin_inset Formula $\mathrm{E}\left[y(1)-y(0)\right]$
+\end_inset
+
+ は一般に一致せず, このままでは ATE を計算できない.
+ この ATE を中心としたフレームワークは, このような理由から
+\series bold
+反事実的
+\series default
+ または
+\series bold
+反実仮想
+\series default
+ (counterfactual) 
+\series bold
+モデル
+\series default
+と呼ばれる
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+このような考え方は Donald Rubin による反事実 (counterfactual) モデルあるいは
+\series bold
+潜在効果
+\series default
+ (potential outcome) モデルと呼ばれるが, counterfactual という語は因果推論の分野に限っても, 文脈によって意味が異なるので
+注意が必要である.
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+しかし, A/B テストでは, 無作為に A/B 両グループへの割り当てを行うことが多い.
+ このような場合は, 1つ1つの個体の結果にばらつきがあっても, ランダム性により処置群・対照群の結果変数をそれぞれ平均したもので差を取れば個体ごとの効果の差が
+平均によって打ち消されるため, ATE を求めることができる.
+ これは統計学では
+\series bold
+ランダム化比較試験
+\series default
+ (RCT) と呼ばれる.
+ RCT で得た観測データがあれば, 以下のように単純に観測できた各群の平均の差をとることで ATE を推定できる.
+ 以降, 簡単のために 
+\begin_inset Formula $y_{1}(D),y_{0}(D)$
+\end_inset
+
+ を単に 
+\begin_inset Formula $y_{1},y_{0}$
+\end_inset
+
+ と表記する.
+ 
+\begin_inset Formula 
+\begin{align*}
+\hat{\mathit{ATE}}:= & \frac{1}{\mathit{card}(T)}\sum_{i\in T}y_{1,i}-\frac{1}{\mathit{card}(C)}\sum_{i\in C}y_{i,0},\\
+T:= & \{i:y_{1,i}\text{ is observed}\},\\
+C:= & \{i:y_{0,i}\text{ is observed}\}
+\end{align*}
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+さらに, 処置群に対して, 現実どおり行った場合と現実に反して処置を行わなかった場合の差を見る
+\series bold
+処置群での平均処置効果
+\series default
+ (ATT; Average Treatment Effect on the Treated) という概念も存在する.
+\begin_inset Formula 
+\begin{align*}
+\mathit{ATT}:= & \mathrm{E}\left[y_{1}-y_{0}\mid D=1\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+両者は名前も式も似ているが, はっきりと別物である.
+ さらに, 対照群での平均処置効果 (ATU; Average Treatment Effect on the Untreated), 
+\begin_inset Formula $\mathit{ATU}:=\mathrm{E}\left[y_{1}-y_{0}\mid D=0\right]$
+\end_inset
+
+ を定義すれば,
+\begin_inset Formula 
+\begin{align*}
+\mathit{ATE}:= & \mathit{ATT}\times p(D=1)+\mathit{ATU}\times p(D=0)
+\end{align*}
+
+\end_inset
+
+という関係が成り立つ.
+ 実務上は ATE または ATT を求めたい場合が多く, ATU を意識することはあまりないが, この関係式が示唆することは重要である.
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "kurosawa2005"
+literal "false"
+
+\end_inset
+
+ にあるとおり, 両者が一致するには, 個体ごとの効果が平均的には処置群と対照群で同じであることが条件だが, ATE と ATT は必ずしも一致しないことがわか
+る.
+ 制約の強さから, 実際には ATT を求めることが多いだろう.
+ 逆に言えば RCT はそれだけ強力である
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+ただし, それは理論上の話である.
+ 実用上はさらにいろいろな問題を考える必要がある.
+ こういう話について知りたい場合, 
+\begin_inset CommandInset citation
+LatexCommand citealp
+key "iwanamiDS3chp6"
+literal "false"
+
+\end_inset
+
+ が入門として優れている.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Difference in Differences (DID, DD) 推定法
+\end_layout
+
+\begin_layout Standard
+ATT の式にも, 観測できない結果 
+\begin_inset Formula $y_{0}$
+\end_inset
+
+ が含まれている.
+ これは RCT が前提ならば 
+\begin_inset Formula $y(0)$
+\end_inset
+
+ で代用でき, よって ATE と同値になる.
+ RCT が適用できない場合, さらに別の方法が必要であり, その1つが DID である.
+\end_layout
+
+\begin_layout Standard
+DID は因果推論のフレームワークとして歴史が古く
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+もともと DID は保健・公衆衛生の研究として生まれ, かなり古くからある概念である (https://www.mailman.columbia.edu/resear
+ch/population-health-methods/difference-difference-estimation).
+\end_layout
+
+\end_inset
+
+, しかもシンプルな発想である.
+ 前節で挙げた Rubin 的因果推論の文脈で書かれた教科書が多く, 例えば 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Hoshino2009"
+literal "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "AngristPischke2009"
+literal "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "morita2014"
+literal "false"
+
+\end_inset
+
+ や, 『岩波データサイエンス』シリーズでも 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "iwanamiDS3chp8"
+literal "false"
+
+\end_inset
+
+ で具体的な事例を交えて解説されている.
+ 
+\end_layout
+
+\begin_layout Standard
+DID は
+\series bold
+ RCT よりも柔軟性をもたせた方法と位置づけられる
+\series default
+.
+ RCT の場合は処置群と対照群がそれぞれ均質であると案に仮定しているが, DID ではその仮定が満たされなくとも ATT を推定できるという長所がある.
+ DID は, ある処置を実行後だけでなく, 
+\series bold
+実行前でも処置群と対照群それぞれの結果変数を観測したデータが手元にある
+\series default
+という前提の方法である.
+ そこで, 結果変数 
+\begin_inset Formula $y(D)$
+\end_inset
+
+ に時間を表す記号
 \begin_inset Formula $t$
 \end_inset
 
@@ -432,53 +855,75 @@ pulation-health-methods/difference-difference-estimation)), A/B テストに限�
 \begin_inset Formula $y_{t}(D)$
 \end_inset
 
- とする.
+とする.
  とはいえ, 今考える必要があるのは, 処置前の時点 
-\begin_inset Formula $t=0$
+\begin_inset Formula $t=b$
 \end_inset
 
- と, 処置後の時点 
-\begin_inset Formula $t=1$
+ (before) と, 処置後の時点 
+\begin_inset Formula $t=a$
 \end_inset
 
- の2つだけである.
- まず, 処置群の, 処置前後での結果の差,
+ (after) の2時点だけである
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+しかし, 後で確認したところ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Hoshino2009"
+literal "false"
+
+\end_inset
+
+ では a を処置前, b を処置後として記述していたので, かなり紛らわしいことになってしまった.
+\end_layout
+
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Standard
+まず, 処置群の, 処置前後での結果の差,
 \begin_inset Formula 
 \begin{align*}
-\Delta y(1):= & y_{1}(1)-y_{0}(1)
+\Delta y(1):= & y_{a}(1)-y_{b}(1)
 \end{align*}
 
 \end_inset
 
-を考える.
- 処置の実行前後の結果の差をもって処置 
+は, 処置の実行前後の結果の差をもって処置 
 \begin_inset Formula $D$
 \end_inset
 
  の「介入効果」と言えるだろうか? A/B テストは, A/B の2つのグループを比較するという方法論だった.
  しかしこれは処置群だけの差しか取っていない.
  外部からの介入を完全に遮断する実験室での実験でもない限り, 
-\begin_inset Formula $t=0$
+\begin_inset Formula $t=b$
 \end_inset
 
  から 
-\begin_inset Formula $t=1$
+\begin_inset Formula $t=a$
 \end_inset
 
  の期間には, 処置以外にも結果に影響する出来事が多く発生しているはずである.
  競合の参入, 市場構造の変化, 自社の営業の努力など, 色々な要因が考えられる.
- そこで, 処置を行わなかった対照群についても差,
+ そこで, そこで, 処置を行わなかった対照群についても差,
 \begin_inset Formula 
 \begin{align*}
-\Delta y(0) & :=y_{1}(0)-y_{0}(0)
+\Delta y(0):= & y_{a}(0)-y_{b}(0)
 \end{align*}
 
 \end_inset
 
-をとってみる.
+
+\end_layout
+
+\begin_layout Standard
+を考える.
  この差の大きさは, 
 \begin_inset Formula $\Delta y(1)$
 \end_inset
@@ -502,33 +947,20 @@ pulation-health-methods/difference-difference-estimation)), A/B テストに限�
 
  の差を取れば, 
 \series bold
-処置以外による変化を除ける
+処置以外による期間中の変化を除去できる
 \series default
 のではないか, と考えられる.
- というわけで, この施策のある個体とそうでない個体の差による
-\series bold
-介入効果
-\series default
-を 
-\begin_inset Formula $\tau$
+ というわけで, この施策のある個体とそうでない個体の差による介入効果 
+\begin_inset Formula $\tau_{\mathit{DID}}$
 \end_inset
 
- と表す.
+ を, 以下のような2重の差として定義する.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-\tau:= & \Delta y(1)-\Delta y(0)\\
-= & \left[y_{1}(1)-y_{0}(1)\right]-\left[y_{1}(0)-y_{0}(0)\right]
-\end{align*}
-
-\end_inset
-
-で表せる.
- 実際には, 処置群・対照群にはそれぞれ1件ぶんのデータしかないということはありえない.
- A/Bテストでは, 数百件か, あるいは数万件かの個体 (Webならアクセス単位ということになるだろう) に対してそれぞれのグループいずれかに割り当てている.
- そこで, これらのデータの平均をとって求めることになる.
-\begin_inset Formula 
-\begin{align*}
-\hat{\tau}:= & \left[\bar{y_{1}}(1)-\bar{y_{0}}(1)\right]-\left[\bar{y_{1}}(0)-\bar{y_{0}}(0)\right]
+\tau_{\mathit{DID}}:= & \mathrm{E}\left[y_{a}(1)-y_{b}(1)\right]-\mathrm{E}\left[y_{a}(0)-y_{b}(0)\right]
 \end{align*}
 
 \end_inset
@@ -536,110 +968,228 @@ pulation-health-methods/difference-difference-estimation)), A/B テストに限�
 
 \end_layout
 
-\begin_layout Subsection
-DID と Rubin の因果推論
+\begin_layout Standard
+実は, 
+\begin_inset Formula $\tau_{\mathit{DID}}$
+\end_inset
+
+ は, ATT と同じである.
+ そのため, もう一度厳密に定式化して説明する (が, 冗長なので退屈だったら節末のまとめまで読み飛ばしてもいい).
+\begin_inset Formula 
+\begin{align*}
+y_{t}(D):= & Dy_{1,t}(D)+(1-D)y_{0,t}(D),t=b,a
+\end{align*}
+
+\end_inset
+
+と書ける.
+ そこで, 処置群の, 処置前後での結果の差は, 
+\begin_inset Formula $\Delta y(1):=y_{a}(1)-y_{b}(1)$
+\end_inset
+
+ と書け, 処置を行わなかった対照群についても差を, 
+\begin_inset Formula $\Delta y(0):=y_{a}(0)-y_{b}(0)$
+\end_inset
+
+ と書ける.
+ そして, この施策のある個体とそうでない個体の差による介入効果 
+\begin_inset Formula $\tau_{\mathit{DID}}$
+\end_inset
+
+ を, 以下のような2重の差として定義する.
 \end_layout
 
 \begin_layout Standard
-さて, 単純に平均の差を取るだけで計算できてしまう　DID だが, 万能ではない.
- ここまでで強調したように, このような方法が成り立つには条件がある.
- いわゆる因果推論の概念について定式化したのは, 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "rubin1974Estimating"
-literal "false"
+\begin_inset Formula 
+\begin{align*}
+\tau_{\mathit{DID}}:= & \Delta y(1)-\Delta(0)\\
+= & \mathrm{E}\left[y_{a}(D)-y_{b}(D)\mid D=1\right]-\mathrm{E}\left[y_{a}(D)-y_{b}(D)\mid D=0\right]\\
+= & \mathrm{E}\left[y_{1,a}(1)-y_{1,b}(1)\right]-\mathrm{E}\left[y_{0,a}(1)-y_{0,b}(1)\right].
+\end{align*}
 
 \end_inset
 
-, 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "rubin1990Comment"
-literal "false"
+これをさらに変形すると,
+\begin_inset Formula 
+\begin{align*}
+\tau_{\mathit{DID}}= & \mathrm{E}\left[y_{1,a}(D)-y_{1,b}(D)\mid D=1\right]-\mathrm{E}\left[y_{0,a}(D)-y_{0,b}(D)\mid D=1\right]\\
++ & \mathrm{E}\left[y_{0,a}(1-D)-y_{0,b}(1-D)\mid D=1\right]-\mathrm{E}\left[y_{0,a}(D)-y_{0,b}(D)\mid D=0\right]
+\end{align*}
 
 \end_inset
 
- による.
- 
-\begin_inset Formula $y(1)-y(0)$
+となる.
+ ここで, 1 段目の部分は, 2つの項がいずれも 
+\begin_inset Formula $D=1$
 \end_inset
 
-は, 同じ個体に関する比較でなければならない.
- しかし, 実際にはある個体に対して「処置した場合」と, 「処置しなかった場合」の両方を観察することは絶対にできない.
+ で条件づけられており, ATT と同じである.
+ よって 2段目の部分がゼロ, つまり,
+\begin_inset Formula 
+\begin{align*}
+\mathrm{E}\left[y_{0,a}(D)-y_{0,b}(D)\mid D=1\right]= & \mathrm{E}\left[y_{0,a}(1-D)-y_{0,b}(1-D)\mid D=0\right]
+\end{align*}
+
+\end_inset
+
+ならば, 
+\begin_inset Formula $\tau_{\mathit{DID}}$
+\end_inset
+
+は ATT と同値になる.
+ このように, DID もまた, Rubin 的な因果推論に沿ったフレームワークであることがわかる.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-因果推論という概念には, ドナルド・ルービン (D.
- Rubin) らのこのような議論が背景にある.
- これを踏まえると, DID フレームワークに必要な前提条件が浮かび上がってくる.
-\end_layout
-
-\begin_layout Standard
-処置群と対照群, いずれも 
-\begin_inset Formula $D$
-\end_inset
-
-以外はまったく同じ外部要因の影響を受けている, という仮定である.
- これを
+この条件は, 「処置群が処置の対象となった場合と, 仮にならなかった場合とで, 処置前後の変化が同じ」ということを意味しているため, 
 \series bold
 共通トレンド仮定
 \series default
-という.
+と呼ばれている.
+ よって, 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:DID"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ の 
+\begin_inset Formula $\hat{y}_{b}(1),\hat{y}_{a}(1)$
+\end_inset
+
+ のように, 対照群と傾きが同じである場合のみ, DID による推定が ATT である.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename did_chart.png
+	lyxscale 50
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+DID と平行トレンド仮定のイメージ (
+\begin_inset CommandInset citation
+LatexCommand citealp
+key "iwanamiDS3chp8"
+literal "false"
+
+\end_inset
+
+ を参考に作成)
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:DID"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+最も単純な方法では, ATE のように各標本平均とその差を計算すれば DID 推定ができる.
+ あるいは, 他に結果変数に影響することが分かっている共変量があるならば, 処置群, 対照群のデータをプールして次のような1つの重回帰モデルで推定することができ
+る.
+\begin_inset Formula 
+\begin{align*}
+y_{i,t}= & \alpha+\tau_{\mathit{DID}}D_{i}D_{a}+\beta D_{i}+\gamma D_{a}+\boldsymbol{x}_{i}^{\prime}\boldsymbol{\theta}+\varepsilon_{i}
+\end{align*}
+
+\end_inset
+
+ここでは, 個体 
+\begin_inset Formula $i$
+\end_inset
+
+ の処置前後の結果変数が 
+\begin_inset Formula $y_{i,t}$
+\end_inset
+
+であり, 
+\begin_inset Formula $D_{i}$
+\end_inset
+
+ が個体 
+\begin_inset Formula $i$
+\end_inset
+
+ の処置の有無を表す指示関数, 
+\begin_inset Formula $D_{a}$
+\end_inset
+
+ が, 
+\begin_inset Formula $t=a$
+\end_inset
+
+ であるときのダミー変数, 
+\begin_inset Formula $\boldsymbol{x}_{i}$
+\end_inset
+
+ が結果に影響を及ぼす共変量で, 
+\begin_inset Formula $\varepsilon_{i}$
+\end_inset
+
+ が誤差項である.
+\end_layout
+
+\begin_layout Subsubsection
 DID のまとめ
 \end_layout
 
 \begin_layout Standard
-このセクションの最後に, DID についてまとめると, 以下のようになる.
+DID の性質をまとめると, 以下のようになる.
 \end_layout
 
 \begin_layout Itemize
-差の差推定法 (DID) は, 施策の前後の差をとり, さらに施策の有無で差をとることで介入効果を推定する方法論である.
+差の差推定法 (DID) は, 施策の前後の差をとり, さらに施策の有無で差をとることで介入効果 (ATT) を推定する方法である.
 \end_layout
 
 \begin_layout Itemize
-最もシンプルな DID は, 単回帰でも効果を求めることができる.
+最もシンプルな DID は, 標本平均の差で求められる.
 \end_layout
 
 \begin_layout Itemize
-ただし DID には, いくつかの前提条件がある:
+DID は, 処置群・対照群は介入効果を除いて, 全く同じ外部要因から, 同じ大きさの影響を受けているという前提 (共通トレンド仮定) で ATT
+ を推定しているのに等しい.
+ 
 \end_layout
 
-\begin_deeper
-\begin_layout Enumerate
-(SUTVA の仮定((stable unit treatment value assumption))) 処置/非処置による効果は, その個体にとどまる.
- つまりある個体に処置を与えた/与えなかったことが, 他の個体に直接的/間接的な影響を与えない.
-\end_layout
+\begin_layout Paragraph
+\begin_inset Note Note
+status open
 
-\begin_layout Enumerate
-(共通トレンド仮定) 処置群・対照群は処置を除いて全く同じ外部要因から, 同じ大きさの影響を受けている.
-\end_layout
-
-\begin_layout Enumerate
-仮に処置群が対照群に, 対照群が処置群になったとしても, 結果は変わらない.
-\end_layout
-
-\end_deeper
 \begin_layout Paragraph
 時系列と DID 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 本来の DID では, 原則として2時点間の差分だけを扱うが, これ以降の説明のため, 時系列の時点を増やしても同様に扱えるということを補足しておく.
  当初の DID では, 
 \begin_inset Formula $t=1$
@@ -656,6 +1206,11 @@ DID のまとめ
  の各時点での介入効果もまた, それぞれの差分をとることで計算できる.
  
 \begin_inset Formula $\Delta\bar{y}_{2}(1):=\bar{y}_{2}(1)-\bar{y}_{1}(1),\Delta\bar{y}_{3}(1):=\bar{y}_{3}(1)-\bar{y}_{2}(1),\cdots\Delta y_{t}(D):=\bar{y}_{t}(D)-\bar{y}_{t-1}(D)$
+\end_inset
+
+
+\end_layout
+
 \end_inset
 
 
@@ -682,70 +1237,75 @@ literal "false"
 
 \end_inset
 
-によって考案された.
+ によって考案された.
  彼らは DID の欠点を2つ挙げている.
 \end_layout
 
 \begin_layout Enumerate
-DID のスキームでは, どのように比較対象を選ぶべきかのルールが曖昧である
+DID のスキームでは, どのように比較対象を選ぶべきかのルールが曖昧である (いわゆる cherry-picking の危惧)
 \end_layout
 
 \begin_layout Enumerate
-非集計データからのサンプルとしてデータを得られた場合, DID のスキームで測れる不確実性は, 集計されたデータのもののみである.
- 予め集計されたデータに至っては, これを集計することもできない.
+DID のスキームは従来的な統計推論が用いられており, これで定量化できる推定結果の不確実性は, 集計によるもの (例えば標本平均に対する標準誤差)
+ に過ぎず, 反事実的な要因によるものを反映していない.
 \end_layout
 
 \begin_layout Standard
-そこで考案された SC 法について解説する.
+SC 法では, 
+\begin_inset Formula $t=T_{0}$
+\end_inset
+
+ が介入直前時点で, それ以前は処置群・対照群いずれも処置がなされない.
  
-\begin_inset Formula $t=1,\cdots,T_{0},\cdots,T$
+\begin_inset Formula $t=T_{0}+1$
 \end_inset
 
- 
-\begin_inset Formula $T_{0}$
-\end_inset
-
- が介入直前時点で 
-\begin_inset Formula $T_{0}+1$
-\end_inset
-
- 時点から介入.
+ 時点以降, 処置群に対して処置がなされる.
  
 \begin_inset Formula $J+1$
 \end_inset
 
- の個体があるとして, そのうち個体 
+ のグループがあるとして, そのうちグループ 
 \begin_inset Formula $1$
 \end_inset
 
- にのみ介入があり, 残りの 
+ のみが処置群で, 残りの 
 \begin_inset Formula $2,\cdots,J+1$
 \end_inset
 
- にはなかったとする.
- 個体 
-\begin_inset Formula $i$
+ は対照群とする.
+ DID と同様に, グループ 
+\begin_inset Formula $j$
 \end_inset
 
  の 
 \begin_inset Formula $t$
 \end_inset
 
- 時点での結果変数を 
-\begin_inset Formula $y_{i,t}(D)$
+時点の結果変数を 
+\begin_inset Formula $y_{j,t}(D)$
 \end_inset
 
  とする.
- Rubin の定義に従えば, 同一個体で処置した場合の結果と, 処置しない場合の結果が介入効果であった.
- つまり, ここでは
+ DID と同様に, ATT を介入効果として推定する.
 \begin_inset Formula 
 \begin{align*}
-\tau_{1,t}:= & y_{1,t}(1)-y_{1,t}(0)
+\tau_{t}:= & \mathrm{E}\left[y_{1,t}(D)-y_{j\neq1,t}(D)\mid D=1\right]
 \end{align*}
 
 \end_inset
 
-を求めるのが目的となる.
+と書ける.
+\end_layout
+
+\begin_layout Standard
+DID では単純に処置群・対照群の差分でs求めた ATT を介入効果として推定する方法だったが,
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+しかし既に説明したように, これは普通観測できないので, DID では異なる個体で比較することになる.
+ DID が二度差分を取るのは, 個体間の差を打ち消すためである.
  Rubin の定義と整合することを確認しておこう.
  割り当て変数 
 \begin_inset Formula $D$
@@ -783,9 +1343,9 @@ y_{1,t}:= & y_{1,t}(0)+\tau_{1,t}D_{i}
  と省略する.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 しかし, 
-\begin_inset Formula $i=1$
+\begin_inset Formula $j=1$
 \end_inset
 
  は処置群なので, 
@@ -793,11 +1353,30 @@ y_{1,t}:= & y_{1,t}(0)+\tau_{1,t}D_{i}
 \end_inset
 
  は観察できても 
-\begin_inset Formula $y_{1,}t(0)$
+\begin_inset Formula $y_{1,t}(0)$
 \end_inset
 
  は絶対に観察できない.
- そこで, DID のように擬似的に介入効果を考える.
+ 
+\end_layout
+
+\end_inset
+
+SC 法では 先に挙げた批判を解消するため, 複数の対照群から擬似的に処置群の 
+\begin_inset Formula $y_{0,t}(1)$
+\end_inset
+
+ を生成して介入効果を計算する.
+ DID では単に1つだけの対照群を用意する (特定の州とか, 地方に限定して収集したデータを使うことが多い) ため, cherry-picking
+ にもなりやすい, そこで, 複数の対照群
+\begin_inset Formula $\{y_{j,t}\}$
+\end_inset
+
+ から 
+\begin_inset Formula $y_{1,t}$
+\end_inset
+
+ を求める.
 \end_layout
 
 \begin_layout Standard
@@ -807,7 +1386,7 @@ y_{1,t}:= & y_{1,t}(0)+\tau_{1,t}D_{i}
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align}
-y_{i,t}(0):= & \delta_{t}+\boldsymbol{z}_{i}^{\prime}\boldsymbol{\theta}_{t}+\boldsymbol{\mu}_{i}^{\prime}\boldsymbol{\lambda}_{t}+\varepsilon_{i,t}\label{eq:synthetic}
+y_{i,t}:= & \delta_{t}+\boldsymbol{z}_{i}^{\top}\boldsymbol{\theta}_{t}+\boldsymbol{\mu}_{i}^{\top}\boldsymbol{\lambda}_{t}+\varepsilon_{i,t}\label{eq:synthetic}
 \end{align}
 
 \end_inset
@@ -817,11 +1396,11 @@ y_{i,t}(0):= & \delta_{t}+\boldsymbol{z}_{i}^{\prime}\boldsymbol{\theta}_{t}+\bo
 
 \begin_layout Standard
 なお, 
-\begin_inset Formula $\cdot^{\prime}$
+\begin_inset Formula $\cdot^{\top}$
 \end_inset
 
 は転置記号である.
- この仮定は, この SC 法の持つ特徴のエッセンシャルな部分を抜き出す最も単純である.
+ この仮定は, この SC 法の持つ特徴のエッセンシャルな部分を抜き出す最も単純なケースである.
  右辺の第1項 
 \begin_inset Formula $\delta_{t}$
 \end_inset
@@ -829,7 +1408,7 @@ y_{i,t}(0):= & \delta_{t}+\boldsymbol{z}_{i}^{\prime}\boldsymbol{\theta}_{t}+\bo
  は未知の時間変化するトレンドで, 処置・対照群とで共通している.
  つまり DID でいう共通トレンド仮定に対応する.
  第2項 
-\begin_inset Formula $\boldsymbol{z}_{i}^{\prime}\boldsymbol{\theta}_{t}$
+\begin_inset Formula $\boldsymbol{z}_{i}^{\top}\boldsymbol{\theta}_{t}$
 \end_inset
 
  は共変量 
@@ -843,7 +1422,7 @@ y_{i,t}(0):= & \delta_{t}+\boldsymbol{z}_{i}^{\prime}\boldsymbol{\theta}_{t}+\bo
  の内積である.
  添字の通り, 共変量は個体ごとには異なるが, 時間に対して一定であり, 係数は時間に対して変化しうる.
  第3項の
-\begin_inset Formula $\boldsymbol{\mu}_{i}^{\prime}\boldsymbol{\lambda}_{t}$
+\begin_inset Formula $\boldsymbol{\mu}_{i}^{\top}\boldsymbol{\lambda}_{t}$
 \end_inset
 
  は, いわゆる, 
@@ -866,8 +1445,12 @@ y_{i,t}(0):= & \delta_{t}+\boldsymbol{z}_{i}^{\prime}\boldsymbol{\theta}_{t}+\bo
 \series bold
 内生変数
 \series default
-と呼ぶことが多い) が潜んでいる場合はバイアスが発生することが知られている((交絡効果 (内生変数) の問題はほとんどの計量経済学の教科書で言及されているが,
- 特に今回のような設定のモデルに関する説明は, 
+と呼ぶことが多い) が潜んでいる場合はバイアスが発生することが知られている
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+交絡効果 (内生変数) の問題はほとんどの計量経済学の教科書で言及されているが, 特に今回のような設定のモデルに関する説明は, 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "CameronTrivedi2005"
@@ -908,10 +1491,15 @@ literal "false"
 
 \end_inset
 
- の邦訳がある.)).
+ の邦訳がある.
+\end_layout
+
+\end_inset
+
+.
  計量経済学の研究テーマは, 交絡効果の扱いがかなりの割合を占める.
- よって, 単純ではあるが((もちろん適切な仮定をおけばここから非線形モデルに拡張することもできるだろう)), 観察データから介入効果を測定する際に重要な仮定が
-揃っている.
+ よって, 単純ではあるが (もちろん適切な仮定をおけばここから非線形モデルに拡張することもできるだろう), 観察データから介入効果を測定する際に重要な仮定が揃
+っている.
  第4項はいわゆる誤差項で, ここでは 
 \begin_inset Formula $i,t$
 \end_inset
@@ -1000,13 +1588,22 @@ noprefix "false"
 \begin_inset Formula $t=T_{0}+1$
 \end_inset
 
- 以降での処置群の推移を再現できないからである((ただし, 介入の前後で構造的な関係が大きく変化しないという制約は必要である.)).
+ 以降での処置群の推移を再現できないからである (ただし, 介入の前後で構造的な関係が大きく変化しないという制約は必要である.).
  つまりこの式は, 共変量を所与とした結果変数の条件分布 
 \begin_inset Formula $p(y_{1,t}\mid\boldsymbol{z})$
 \end_inset
 
- だけでなく, 共変量と結果変数の同時分布も線形関数で近似できるというナイーブな仮定を意味している((つまり, 標準的な機械学習の想定とは違い,
- out-of-sample で共変量分布が変化することをモデルに織り込んでいる.))とみなせる.
+ だけでなく, 共変量と結果変数の同時分布も線形関数で近似できるというナイーブな仮定を意味している
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+つまり, 標準的な機械学習の想定とは違い, out-of-sample で共変量分布が変化することをモデルに織り込んでいる.
+\end_layout
+
+\end_inset
+
+とみなせる.
 \end_layout
 
 \begin_layout Standard
@@ -1031,13 +1628,13 @@ noprefix "false"
 \end_inset
 
  でも介入効果 
-\begin_inset Formula $\tau=y_{1,t}(1)-y_{1,t}(0)$
+\begin_inset Formula $\tau=y_{1,t}(1)-y_{0,t}(1)$
 \end_inset
 
  を計算できる.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 シンセティック統制法の計算方法
 \end_layout
 
@@ -1047,7 +1644,7 @@ noprefix "false"
 \end_inset
 
  が計算できるというのはかなり都合の良い話で, これが成立するには一定の条件がある.
- これについて後で述べることにして, どのようにしてこの重み係数 
+ どのようにしてこの重み係数 
 \begin_inset Formula $\boldsymbol{w}^{\ast}$
 \end_inset
 
@@ -1136,15 +1733,21 @@ literal "false"
 \end_inset
 
  では示されている.
- 一方で標準誤差についても, 強い非線形性がある場合どうするかとか, よりモデルの仮定を緩和した場合についても議論されている.
+ 標準誤差についても, 強い非線形性がある場合どうするかとか, よりモデルの仮定を緩和した場合についても議論されている.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 シンセティック統制法のまとめ
 \end_layout
 
 \begin_layout Standard
-このセクションの最後に, DID から SC 法へ発展したことでの変化をまとめる.
+DID から SC 法へ発展したことでの変化をまとめる.
+\end_layout
+
+\begin_layout Itemize
+DID では処置群と対照群の選び方について, 諸々の仮定を満足しているかについて定量的な議論が難しかった.
+ うがった見方をするなら, 都合のいい結果を得られるように対照群を選ぶ, つまり cherry-picking もできてしまうところ, SC 法では対照群の選び
+方を, 介入前の結果変数が両群で同等か, といった定量的な議論に落とし込むことができるようになった.
 \end_layout
 
 \begin_layout Itemize
@@ -1153,12 +1756,6 @@ literal "false"
 \end_inset
 
 の時間変化を許容している: DID では共通トレンドを前提としていたが, 個体・時間によって変化するケースも許容されるようになった.
-\end_layout
-
-\begin_layout Itemize
-DID では処置群と対照群の選び方について, 諸々の仮定を満足しているかについて定量的な議論が難しかった.
- うがった見方をするなら, 都合のいい結果を得られるように対照群を選ぶ, つまり cherry-picking もできてしまうところ, SC 法では対照群の選び
-方を, 介入前の結果変数が両群で同等か, といった定量的な議論に落とし込むことができるようになった.
 \end_layout
 
 \begin_layout Standard
@@ -1189,11 +1786,28 @@ noprefix "false"
 \end_layout
 
 \begin_layout Subsection
-ベイズ構造時系列モデル (bsts)
+ベイズ構造時系列モデル (BSTS)
 \end_layout
 
 \begin_layout Standard
-Google の研究チームに所属する 
+ここまで, DID と SC 法とで, 2時点だけのデータを扱う方法を紹介した.
+ しかし, この後に出てくる causal impact は, 2時点よりも多くの期間での介入効果を見ることができる
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+DID や SC でも, 同じような拡張にすること自体は可能だと思う.
+\end_layout
+
+\end_inset
+
+.
+ そのために, Causal Impact の実装ではベイズ構造時系列 (BSTS) モデルを利用している.
+ 
+\end_layout
+
+\begin_layout Standard
+BSTS は, Google の研究チームに所属する 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "ScottVarian2014"
@@ -1201,7 +1815,7 @@ literal "false"
 
 \end_inset
 
- が開発した時系列モデルフレームワークで, R のパッケージとして実装されている.
+ で提案され, R をインターフェースとした実装が用意されている.
 \end_layout
 
 \begin_layout Standard
@@ -1209,13 +1823,7 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-bsts はいわゆる状態空間モデルである((時系列モデルの用語としては, 現在の状態変数が現在の他の変数と相関する「同時決定モデル」を構造時系列と呼ぶという認識
-だったが, 違うのだろうか?))が, 非常に多くの変数を入力として, spike-and-slab 事前分布でパラメータをスパース推定する, ベイズモデル平均化
- (BMA) 法を利用する, といった特徴がある.
-\end_layout
-
-\begin_layout Standard
-これは詳しくは私が過去に書いたものを見てほしい.
+詳しくは上記の論文か, 私が過去に書いたものを参考にしてほしい.
 \end_layout
 
 \begin_layout Standard
@@ -1223,7 +1831,50 @@ bsts はいわゆる状態空間モデルである((時系列モデルの用語�
 \end_layout
 
 \begin_layout Standard
-なお, 上記の解説ではモデルが数式で書かれわかりにくい, という場合は, 
+BSTS についてここでは causal impact の説明の文脈に最低限必要なぶんだけの説明だけをしておく.
+ BSTS はいわゆる状態空間モデルである
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+時系列モデルの用語としては, 現在の状態変数が現在の他の変数と相関しうる「同時決定モデル」を構造時系列モデルと呼ぶという認識だったが, 一般には違うのだろうか?
+\end_layout
+
+\end_inset
+
+.
+ DID フレームワークが2時点間の, 静的な回帰モデルであったのに対し, Causal Impact では, 自己回帰・ラグ回帰といった時間変化を考慮した「動
+的」なモデルを構築できるように状態空間モデルを用いている.
+ そして, 時系列として扱うため, 3時点以上の期間についての結果変数の推移を見ることもできるのが強みとなる
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+とはいえ, DID のフレームワークでも複数時点に拡張すること自体は可能だと思う.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+加えて, モデルの予測精度向上の為, BSTS にベイズモデル平均化 (BMA) 法という, 一種のアンサンブル学習を用意している.
+ これは, 対照群を1つだけ用意するのではなく, 複数の対照群を用いた SC 法での工夫に対応していると言える
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+これは比喩的すぎてあまり正確な解説とは言えないかもしれない.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+なお, 上記で挙げた解説ではモデルが数式で書かれているのでわかりにくい, という場合は, 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "BrodersenEtAl2015"
@@ -1231,7 +1882,7 @@ literal "false"
 
 \end_inset
 
- にグラフィカルモデルでの表記があるので, そちらを確認するのもいいかもしれない (私は状態空間表現のほうが分かりやすい).
+ にグラフィカルモデルでの表記があるので, そちらを確認するのもいいかもしれない.
 \end_layout
 
 \begin_layout Subsection
@@ -1248,30 +1899,44 @@ literal "false"
 
  が考案した causal impact フレームワークは, ここまでで紹介した DID, SC 法の考え方を踏まえて, ベイズ構造時系列モデルの特性を取り入れ
 ている.
- SC 法では, 介入前までの対照群の結果変数を加重平均することで, 処置群の結果に近似し,
+ 冒頭に挙げたサイトでも causal impact を解説しているが, ここでは因果推論の文脈に沿って改めて説明する.
+ 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $t=1,\cdots,n$
+処置の有無について, 処置したものにもし処置しなかった場合/処置しなかったものにもし処置した場合, という反事実的な結果は観察できないという根本的な問題について
+, DID 法では単純に処置群と対照群の差で比較し, SC 法では, 介入前までの対照群の結果変数の加重平均で処置群の反事実的な結果を近似していた.
+ Causal impact では, 
+\begin_inset Formula $t=1,\cdots,T_{0}$
 \end_inset
 
  までが施策前の時系列データであり, 施策後のデータが 
-\begin_inset Formula $t=n+1,\cdots,m$
+\begin_inset Formula $t=T_{0}+1,\cdots,T$
 \end_inset
 
  まであるとする.
  この場合, 施策前のデータ 
-\begin_inset Formula $\{y_{1},\cdots,y_{n}\}$
+\begin_inset Formula $\{y_{1},\cdots,y_{T}\}$
 \end_inset
 
  で学習し, 事後予測分布を求める.
  事後予測分布から, 施策後の期間の予測値 
-\begin_inset Formula $\{\tilde{y}_{n+1},\cdots\tilde{y}_{m}\}$
+\begin_inset Formula $\{\tilde{y}_{T_{0}+1},\cdots\tilde{y}_{T}\}$
 \end_inset
 
- を求める((bsts の出力する予測値は確定的ではなく, 予測分布に基づく乱数であることに注意.)).
+ を求める
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+bsts の出力する予測値は確定的な値ではなく, 予測分布に基づく乱数であることに注意.
+\end_layout
+
+\end_inset
+
+.
  そして, 
-\begin_inset Formula $t=n+1,\cdots,m$
+\begin_inset Formula $t=T_{0}+1,\cdots,T$
 \end_inset
 
  の期間について, 実績値と予測値の差
@@ -1283,7 +1948,7 @@ literal "false"
 \end_inset
 
  を得る.
- これが DID/SC フレームワークでの因果効果に対応する.
+ これが DID/SC フレームワークでの介入効果に対応する.
  あとは期中の 
 \begin_inset Formula $\phi_{t}$
 \end_inset
@@ -1292,7 +1957,54 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-この部分は, すでに 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ci_image.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+causal impact フレームワーク.
+ 
+\begin_inset Formula $y_{0},y_{1}$
+\end_inset
+
+ のプロット (上段), その差 (中段), 各時点の介入効果 
+\begin_inset Formula $\phi_{t}$
+\end_inset
+
+とその累積 (下段) 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+この
+\begin_inset Formula $\tilde{y}_{t}(0)$
+\end_inset
+
+ を推定する部分は, すでに 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "ScottVarian2014"
@@ -1310,16 +2022,38 @@ bsts
 \end_inset
 
  に対応するデータを生成している.
- つまり, もはや
-\series bold
-対照群のデータすら不要になった
-\series default
-, というのが causal impact の大きな特徴である.
- A/B テストの B が必要なくなったのである.
+ つまり, 処置群の,
 \end_layout
 
 \begin_layout Standard
-しかし, よく理解している人間ならば, この説明を聞いただけでは古典的な異常検知とどう違うのかわからない, と考えるだろう.
+仮に処置のなかった場合という反事実的な結果を 
+\begin_inset Formula $y_{0,t}(0)$
+\end_inset
+
+ をモデルに基づいて生成するという方法は SC 法に似ているが, causal impact では もはや
+\series bold
+対照群のデータすら不要になった
+\series default
+, というのが 大きな違いである.
+ A/B テストの B が必要なくなったのである.
+\end_layout
+
+\begin_layout Section
+DID と Causal Impact の限界
+\end_layout
+
+\begin_layout Standard
+ここまでが, causal impact についての教科書的な解説であり, すぐにアクセスできる情報から読み取れる内容だ.
+ 
+\end_layout
+
+\begin_layout Standard
+しかし, よく理解している人間ならば, この説明を聞いただけでは予測残差を使った古典的な異常検知とどう違うのかわからない, と考えるだろう.
+ 
+\series bold
+ありていに言えば, 同じである.
+
+\series default
  正常系であるデータで回帰し, 予測残差の大きさを異常値として扱うというのは, すでに様々な異常検知の教科書で紹介されている.
  誰が提案したかすら書かれていないので, 相当古くからある, 素朴な発想ということなのだろう.
  以前 Tokyo.R の応用セッション『
@@ -1331,7 +2065,8 @@ literal "false"
 
 \end_inset
 
-』でも指摘したように, この方法は当てはめるデータが正常であるという前提でのみ成り立つし, さらに
+』で私が指摘したように, この方法は当てはめるデータが正常である (あるいはパラメータを学習するまでもなく正常系のモデルが自明である) という前提でのみ成り立つ
+し, さらに
 \begin_inset CommandInset href
 LatexCommand href
 name "前回の発表"
@@ -1340,19 +2075,26 @@ literal "false"
 
 \end_inset
 
-でも言ったように, 「従来的な機械学習」は相関関係しか見ていないから, 共変量\SpecialChar breakableslash
-特徴量 
+でも言ったように, 「標準的な機械学習」は独立変数 (特徴量) と従属変数 (目的変数) との相関関係だけを見て条件分布または単に条件期待値を構成しているだけな
+ので, 共変量 (特徴量) 
 \begin_inset Formula $x$
 \end_inset
 
- の変化に対してはうまく当てはまらない可能性がある.
- この手の方法は, 正常系を把握していること, そして共変量と目的変数の関係に変化が起きないことを暗黙の前提としている.
+ の分布が変化 (共変量シフト) したときにはうまく当てはまらない可能性がある.
 \end_layout
 
 \begin_layout Standard
-Causal impact が従来のやり方と違うのは, この辺の問題である.
- bsts パッケージでできるのはデータ内での当てはまりだけを考慮する, 「従来的な機械学習」である.
- よって, bsts によって得られる予測分布関数は, 
+もう一度 BSTS の仕組みについて考えてみる.
+ 
+\family typewriter
+bsts
+\family default
+ パッケージでできるのはデータ内での当てはまりだけを考慮する, 「従来的な機械学習」である.
+ よって, 
+\family typewriter
+bsts
+\family default
+ によって得られる予測分布関数は, 
 \begin_inset Formula $t$
 \end_inset
 
@@ -1381,65 +2123,116 @@ p(y_{t+1}\mid\{y_{s}\}_{s=1}^{t},\{x_{s}\}_{s=1}^{t+1})
 \end_inset
 
 である.
+ そして causal impact ではさらに 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+ で周辺化しているので, 介入後の 
+\begin_inset Formula $\tilde{y}_{t}(0)$
+\end_inset
+
+ を求めるのに 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+ の情報は必要ではなくなっている.
+ これは, causal impact フレームワークでは, 対照群ではなく処置前の処置群のデータから SC 法に基づいて仮想的なシンセティック対照群を生成して
+いるという見方もできる.
+ また, BSTS では BMA を採用している.
+ 一般に BMA というかアンサンブル学習は, モデルのバリアンスを低減することに関して有効だが, これもまた「標準的な機械学習」の範疇であり,
+ 共変量シフトに対してロバストなモデルになるという保証はない
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+もしなったとしても, ごく限られた条件下, あるいは「偶然」だろう.
+ ごく限られた条件下については, この後実例を示す.
 \end_layout
 
-\begin_layout Standard
-この観点では, causal impact フレームワークは, 対照群ではなく処置前の処置群のデータから SC 法に基づいて仮想的なシンセティック対照群を生成し
-ているとみなせる.
+\end_inset
+
+.
+ さらに, 
+\family typewriter
+CausalImpact
+\family default
+ の [https://github.com/google/CausalImpact/blob/60759074a6d909875d064c837495ba80e
+1417b01/R/impact_model.R#L162:title=ソースコード] によれば, モデルの自動選択をしてくれるわけではない.
+ 特に指定をしない場合, 時系列モデルには季節周期成分すらなく,
+\series bold
+ 最も単純な種類のモデルの1つである, ローカルレベルモデルが採用される
+\series default
+.
+ よって, ある程度複雑な分布をによるデータでは, causal impact 誤った結果を出してしまう可能性がある.
 \end_layout
 
-\begin_layout Section
-DID の限界
+\begin_layout Subsection
+部分識別 (?) で考える
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand citet
-key "BrodersenEtAl2015"
+key "Okumura2018"
 literal "false"
 
 \end_inset
 
- も指摘しているように, 施策によるインパクトがすぐに収縮する可能性もあり, その期間がどれくらいかは 
-\family typewriter
-CausalImpact
-\family default
- は答えてくれない.
-\end_layout
+ には, ヒントが書かれている.
+ 部分識別 (partial identification) やバウンド識別というのは, 推定したいパラメータの理論上の上下界 (バウンド) を特定するというア
+プローチである.
+ 多くの統計的/機械学習的モデルでは様々な仮定を課して計算しているが, 部分識別は逆にまったく仮定を課さない状態から仮定を追加すると, 推定値のバウンドがどう変
+化するかを検証するという方法論であり, 定性的な仮定と, 定量的なバウンドの識別との対応関係を知ることができる.
+ つまり, 従来の統計学や機械学習でなされる点推定とは全く違うアプローチである.
+ 部分識別は区間推定や信用区間とも全く異なる.
+ これらは従来の, 強い仮定に基づく点推定まわり確率密度を与えているだけである.
+ 一方部分識別は, ある仮定のもとでのバウンドのみを答えるもので, 確率密度に対して何か答えることを目的としたものではない.
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Okumura2018"
+literal "false"
 
-\begin_layout Standard
-パッケージの公式ドキュメントにも, 簡単な解説がある.
-\end_layout
-
-\begin_layout Standard
-[http://google.github.io/CausalImpact/CausalImpact.html:embed:title]
-\end_layout
-
-\begin_layout Standard
-ここでは, (1) 施策の有無と相関する共変量がない, (2) SCによって生成されたコントロール群 (
-\begin_inset Formula $\{\tilde{y}_{t}\}$
 \end_inset
 
- のこと) が
+ ではこれを, データの多さに対して変わるかどうかという観点で特徴づけている.
+ つまり, 従来の推定論に基づく区間推定は, データが増えるほど狭まっている.
+ これはデータを仮定を課しているからであるが, 部分識別はデータの数とは関係ない (部分識別のバウンド自体推定する際に, 従来的な統計推論を利用することはある).
+ causal impact の目的はビジネスインパクトの評価だから, 形式的に点推定することにこだわる必要はなく, 予測結果の不確実さを別の何らかの方法で評価
+できさえすればよいのではないかと思う
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+新規に予測モデルの開発をするかどうかの判断材料として, 最悪のケースと最良のケースを調べる, というのは私はよくやる.
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
-しかし, 今回は, さらに突っ込んだ問題点を指摘していく.
+ただし, 今回のような時系列モデルに関する部分識別の研究は見つからない
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+私は部分識別を専門的に研究していたわけではないので見落としている可能性もある
+\end_layout
+
+\end_inset
+
+.
+ なのでシャープバウンドかどうかをいちいち証明するなど, ゼロから理論的な開拓はをするのはだいぶ面倒だ, 部分識別の考え方をヒントに, 適当な仮定下で
+ causal impact (以下, CI) がどの程度のことまで言えるのかを考える.
+ つまり, 以降の話は部分識別に着想を受けてはいるが, 部分識別と言うほど厳密でテクニカルではない.
 \end_layout
 
 \begin_layout Standard
-DID が課す仮定である共通トレンド仮定が, モデルの構造パラメータの時間不変性に転嫁されたに過ぎない.
+Causal impact は, DID が課す仮定である共通トレンド仮定が, モデルの構造パラメータの時間不変性に転嫁されたに過ぎない.
  ベイズ構造時系列モデルの趣旨から, 「短期的トレンド不変仮定」とでも呼ぶべきだろうか.
- つまり, causal impact は, 介入直前のトレンドが, 介入直後の少なくとも一定の短い期間だけは変わらず続くという仮定に依存しており,
- そしてこの仮定が正しいのか検証するのは困難である.
-\end_layout
-
-\begin_layout Standard
-ではどうするか
-\end_layout
-
-\begin_layout Standard
-よって, 
+ つまり, 
 \begin_inset Formula $T_{0}\leq t$
 \end_inset
 
@@ -1452,143 +2245,13 @@ DID が課す仮定である共通トレンド仮定が, モデルの構造パ�
 \end_inset
 
  はできない.
- 
-\end_layout
-
-\begin_layout Standard
-つまり, SC 法 や causal impact は, 結局, 言い換えただけでトレンドの同一性をよりテクニカルな方法で緩和しただけで, 観察不可能な事象に対
-する仮定は依然として残っている.
- つまり, これらの仮定は反証不可能であるということだ.
-\end_layout
-
-\begin_layout Subsection
-部分識別の世界へ
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Okumura2018"
-literal "false"
-
-\end_inset
-
- には, その例が書かれている.
-\end_layout
-
-\begin_layout Standard
-部分識別やバウンド識別と呼ばれている.
- これらの方法論が, 推定したいパラメータの理論上の上下界 (バウンド) を特定することから出発していることから, 私としてはバウンド識別のほうがうまく表した名
-称の気がするが, 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Okumura2018"
-literal "false"
-
-\end_inset
-
- のように部分識別という呼び方が支配的なようである.
-\end_layout
-
-\begin_layout Standard
-上記のような causal impact の仮定が成り立たないと仮定すれば, 以下のような結果であるのかもしれない.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
+ Causal impact は, 介入直前のトレンドが, 介入直後の少なくとも一定の短い期間だけは変わらず続くという仮定に依存することで, この問題に対処して
+いる (そしてこの仮定が正しいのか検証するのは現実には困難である.).
+ そこで, CI で要求される仮定を, 以下の4つだと考えてみた
+\begin_inset Foot
+status collapsed
 
 \begin_layout Plain Layout
-TODO: T0 で交差するような yt(1), yt(0)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-部分識別は区間推定や信用区間とは全く異なる.
- これらは従来の, 強い仮定に基づく点推定まわり確率密度を与えているだけである.
- 一方部分識別は, ある仮定のもとでのバウンドのみを答えるもので, 確率密度に対しては何も答えられない.
- 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Okumura2018"
-literal "false"
-
-\end_inset
-
- ではこれを, データの多さに対して変わるかどうかという観点で特徴づけている.
- つまり, 従来の推定論に基づく区間推定は, データが増えるほど狭まっている.
- これはデータを仮定を貸しているからであるが, 部分識別はデータの数とは関係ない.
- (ただし部分識別のバウンド自体を推定することは時に必要である)
-\end_layout
-
-\begin_layout Standard
-定性的な仮定を識別に利用できる可能性がある.
-\end_layout
-
-\begin_layout Standard
-ざっと見た限りでは, 時系列モデルに関する部分識別の研究は見つからない((と言っても部分識別を専門的に研究していたわけではないので見落としている可能性もある)).
- なのでシャープバウンドかどうかをいちいち証明するのは無理.
- moderate な仮定下での causal impact の部分識別を考える.
-\end_layout
-
-\begin_layout Standard
-なお, 今回考えたバウンドは完全に我流である.
- おそらく, そもそも部分識別自体が教科書を書けるほど研究が蓄積されていない, ましてや時系列モデルではなおさら.
- なのでシャープバウンドであるかどうかの証明もしていない.
-\end_layout
-
-\begin_layout Standard
-では, bsts の仮定について再考してみる.
- bsts は, (1) 線形状態空間で, (2) 静的回帰 (ラグのない変数) に spike-and-slab 事前分布を使い, (3) ベイジアンモデル平
-均化を使う, というのが大きな特徴である
-\end_layout
-
-\begin_layout Standard
-bsts 自体も状態空間モデルの自由度があるので, bsts で何種類かのモデルを試すことで結果の頑健さを確認することもできる.
- よって, ここで考えるべきは, bsts 表現可能な範囲を超えたケースだろう.
- それは以下のような場合である.
-\end_layout
-
-\begin_layout Standard
-(構造変化) 状態空間モデルの構造パラメータが変化する
-\end_layout
-
-\begin_layout Standard
-(共変量シフト) 外部変数の分布が介入の前後で斉一でなくなる
-\end_layout
-
-\begin_layout Standard
-機械学習でよく共変量シフトと呼ばれる現象である.
-\end_layout
-
-\begin_layout Standard
-これらは以下の公式チュートリアルでも指摘されており, (1) 条件付き無作為性を, 全ての共変量とのプロットで確認すること, (2) 介入直前までのデータにモデ
-ルが当てはまっていることを確認すること, (3) そして介入後のデータと予測値が大きく離れないか確認すること重要だと書いている.
-\end_layout
-
-\begin_layout Standard
-https://google.github.io/CausalImpact/CausalImpact.html#running-an-analysis
-\end_layout
-
-\begin_layout Standard
-加法型ではなく乗数型であった場合,対数変換すれば加法型として扱えるので対処はできるが, 問題となるのはどちらであるか特定するのが難しいということである.
-\end_layout
-
-\begin_layout Standard
-しかし, causal impact の目的はビジネスインパクトの評価である.
- 点推定が困難であれば, 予測結果の不確実さを別の何らかの方法で評価できさえすればよい.
-\end_layout
-
-\begin_layout Standard
-CI が識別できないのは観測方程式の構造変化のみ?
-\end_layout
-
-\begin_layout Standard
-よって, CI で要求される仮定は, 以下の4つである((
 \begin_inset CommandInset citation
 LatexCommand citet
 key "BrodersenEtAl2015"
@@ -1596,16 +2259,22 @@ literal "false"
 
 \end_inset
 
- では仮定 I, III 以外は明的ではない.
- これは私が考えたものである.
- 厳密に考えれば, おそらく互いに排他的でかつより緩和された条件に置き換えることができが, 今回説明する限りではこの程度の大雑把な設定でも問題ないと思われる.)).
+ では仮定 I, III 以外は明記されていない.
+ これは私が考えたものであるが, 標準的な介入効果の推定で課される仮定と大きな違いはない.
+ 厳密に考えれば, おそらく互いに排他的でかつより緩和された条件に置き換えることができそうだが, 今回説明する限りではこの程度の大雑把な設定でも問題ないと思われ
+る.
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Enumerate
 (加法性) 介入効果は介入時の結果変数と, 反事実的な非介入時の結果変数の差である.
 \begin_inset Formula 
 \begin{align*}
-\phi_{t}:= & y_{t}(1)-y_{t}(0)
+\phi_{t}:= & y_{1,t}-y_{0,t}
 \end{align*}
 
 \end_inset
@@ -1662,7 +2331,10 @@ D(t)\perp & X_{t}
 
  に対してしか意味がない.
  そこで, 仮定 III, IV が必要になる.
- 仮定 III は, 因果推論の文脈で言えば, 
+\end_layout
+
+\begin_layout Standard
+仮定 III は, 因果推論の文脈で言えば, 
 \series bold
 強く無視できる割り当て
 \series default
@@ -1678,161 +2350,68 @@ D(t)\perp & X_{t}
 \end_inset
 
 の条件分布として使用しているから, いわゆる相関モデルであり, 共変量分布の変化は考慮されていない.
+\end_layout
+
+\begin_layout Standard
+仮定 IV は, 因果推論に限らずほとんどの統計モデルや機械学習アルゴリズムで暗黙に仮定されているものである.
+ 共変量シフトは条件分布の構造はそのままで, 共変量の分布が変化することだが, 仮定 IV に反するのは条件分布そのものが変化する場合である.
+ BSTS モデルで言うなら, 時変パラメータ以外のパラメータが変化してしまうことを意味する.
+ ただし, 時間経過に伴う当てはまりの悪化の原因が, 観測されていない変数の変化によるもの (仮定 II に対する違反) なのか, 構造パラメータの変化によるも
+のなのか, さらには多くの場合時間とともに減衰しうる 
+\begin_inset Formula $\phi_{t}$
+\end_inset
+
+ によるものなのか (たとえば, 一般均衡効果とか, 同時決定効果とかいうべき現象によって起こる) の識別は, 答え合わせのできるシミュレーションでのみ検証可能
+なことが多く, 正解のわからない実データに当てはめる場合は困難であることが多い (例えばスイッチモデルとみなせば, パラメトリックなモデルでも表現できるため).
  
 \end_layout
 
 \begin_layout Standard
-仮定 IV は, ほとんどの統計モデルや機械学習アルゴリズムで暗黙に仮定されているものである.
- 共変量シフトは条件分布の構造はそのままで, 共変量の分布が変化することだが, 条件分布そのものが変化することでも当てはまりが悪化しうる.
- BSTS モデルで言うなら, 分散パラメータなど時変パラメータではないものが変化してしまうことを意味する.
- このような変化がないというのが仮定 IV である.
- ただし, 時間発展に伴う当てはまりの悪化の原因が, 観測されていない変数の変化なのか, 構造パラメータの変化なのかの識別は一般に難しい.
-\end_layout
+\begin_inset Note Note
+status open
 
-\begin_layout Section
-実演
-\end_layout
+\begin_layout Plain Layout
+仮定 IV が成り立たないケースをさらに分類すると, 介入後の反事実的な結果 
+\begin_inset Formula $y_{0,t}$
+\end_inset
 
-\begin_layout Standard
-CI がうまく機能しない事例について, シミュレーションによる例を紹介する.
- シミュレーションであればデータの生成過程を我々は知っているので, CI の推定結果が正確に評価することができる.
-\end_layout
+ の構造だけが変化するケース, 観測できる
+\begin_inset Formula $y_{1,t}$
+\end_inset
 
-\begin_layout Subsection
-CASE 1: チュートリアルの改変
-\end_layout
+ の構造だけが変化するケース, 両方の構造がそれぞれ同様に変化するケースの3通りがある.
+ このうち, 
+\begin_inset Formula $y_{1,t}$
+\end_inset
 
-\begin_layout Standard
-まずは基本モデルとして, チュートリアルに対して少しだけ改変を加えて生成したデータを使う.
+ だけが変化する場合は, 介入効果と外部要因の切り分けができなくなるが, 差を測ること自体はできる.
  
-\begin_inset Formula $t=1$
+\begin_inset Formula $y_{1,t}$
 \end_inset
 
- から 
-\begin_inset Formula $t=100$
+だけが変化する場合, それは 
+\begin_inset Formula $\phi_{t}$
 \end_inset
 
- までの 100 期間
-\begin_inset Formula 
-\begin{align*}
-y_{t}= & 1.20x_{t}+\eta_{t}\\
-x_{t}= & 0.90x_{t-1}+0.50t+\varepsilon_{t}
-\end{align*}
-
+ に吸収されるため, 介入効果として測定できる.
+ ただし, 必ずしもそれが抜き出したかった介入効果だけを表しているとは言えないかもしれない.
+ 介入後の観測できない
+\begin_inset Formula $y_{0,t}$
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-介入効果の大きさは 
-\begin_inset Formula $t=71$
-\end_inset
-
- 以降一律で 10 加算する.
- 結果は以下の通り.
- ほとんどチュートリアルと同じである.
+の値が変化するようなケースでは, そもそもどう変わるかがわからない.
  
 \end_layout
 
-\begin_layout Subsection
-CASE 2: 共変量シフトの発生
-\end_layout
-
-\begin_layout Standard
-次に, 仮定 III の違反として, 共変量シフトを発生させる.
- 具体的には, 以下のようにする.
- 介入効果の大きさはそのままである.
-\begin_inset Formula 
-\begin{align*}
-y_{t}= & 1.2x_{t}+\eta_{t}\\
-x_{t}= & \begin{cases}
-0.90x_{t-1}+0.50t+\varepsilon_{t} & \text{if }t\leq70\\
-0.50t+\varepsilon_{t}+x_{70} & \text{if }t\geq71
-\end{cases}
-\end{align*}
-
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-これは, 割り当て変数を決める 
-\begin_inset Formula $t$
-\end_inset
-
- に応じて 
-\begin_inset Formula $x$
-\end_inset
-
- が変化していることから, 仮定 III を違反したという想定である.
-\end_layout
-
-\begin_layout Standard
-結果は以下のようになった.
- そもそも観測方程式が単純な線形式であるため, 共変量の分布が変化しても影響がほとんどないことがわかる.
- しかし, 実際には必ずしもこのような単純な構造でないことが多い.
- そこで, さらに CASE 3 を考える.
-\end_layout
-
-\begin_layout Subsection
-CASE 3: 非線形性
-\end_layout
-
-\begin_layout Standard
-観測方程式を非線形式に置き換える.
- つまり, 仮定 II を違反した想定である.
-\begin_inset Formula 
-\begin{align*}
-y_{t}= & 0.01\sqrt{x_{t}}+\eta_{t}\\
-x_{t}= & 0.90x_{t-1}+0.50t+\varepsilon_{t}
-\end{align*}
-
-\end_inset
-
-ベイズ構造時系列モデルは線形状態空間であるので, 非線形な関係から生成されるデータを当てはめると, 平均から離れるほど誤差が大きくなるはずである((テイラー展開
-を思い出せ)).
- 現実のデータでは, 一般にこのような単純な一次関係だけで表現できることは少ないので, この指摘は重要である.
-\end_layout
-
-\begin_layout Standard
-結果は予想通りで, 推定結果は時間経過に伴って 10 から離れ, 過大推定されていく.
- なお, さらに介入以降の共変量シフトを加えればこの差はより顕著になるが, それは自明なので記載は略す.
-\end_layout
-
-\begin_layout Subsection
-CASE 4: 乗数効果
-\end_layout
-
-\begin_layout Standard
-仮定 I が成り立たない場合は数多い.
- 元論文でも, 介入による効果は一定ではなく, やがて減衰する可能性があるが, それがどれくらいから始まるかはわからない, としている.
- このような想定はきりがないため, 一旦は介入期間中の効果は一定である場合だけを考える.
-\end_layout
-
-\begin_layout Standard
-加法性が成り立たない典型例は, 乗法性である.
- つまり,
-\begin_inset Formula 
-\begin{align*}
-y_{t}(1)= & \phi_{t}y_{t}(0)
-\end{align*}
-
-\end_inset
-
- である.
-\end_layout
-
-\begin_layout Section
-議論
-\end_layout
-
-\begin_layout Standard
-ここまでで, Causal Impact フレームワークの理論上の暗黙の仮定を明らかにして, による介入効果の推定がうまく行かないケースがあることが分かった.
- では, どのようにこれらに対処すべきか.
- 実は, CI の公式ドキュメントでは, "How can I check whether the model assumptions are
- fulfilled?" というセクションで, これらの仮定をどう検証すべきかわかりやすく言及している.
+CI が適正に使われているかを確認する方法として, 公式ドキュメントでは, "[https://google.github.io/CausalImpact/Caus
+alImpact.html#faq:title=How can I check whether the model assumptions are
+ fulfilled?]" というセクションで, 結果の sanity check について言及している.
 \end_layout
 
 \begin_layout Standard
@@ -1854,11 +2433,11 @@ First of all, it is critical to reason why the covariates that are included
 \end_layout
 
 \begin_layout Enumerate
-共変量をプロットし, 介入によって共変量が変化していないことを確認する
+共変量をプロットし, 介入前後で共変量が変化していないことを確認する.
 \end_layout
 
 \begin_layout Enumerate
-介入前のデータにモデルが当てはまっていることを確認する
+介入前のデータにモデルが当てはまっていることを確認する.
 \end_layout
 
 \begin_layout Enumerate
@@ -1870,39 +2449,1363 @@ First of all, it is critical to reason why the covariates that are included
 \begin_inset Formula $\hat{y}_{t}(0)$
 \end_inset
 
- が大きくかけ離れていないことを確認する
+ が大きくかけ離れていないことを確認する.
 \end_layout
 
 \begin_layout Standard
 (1) は明らかに, 共変量シフトが発生していないか, つまり 仮定 I を確認するものである.
  (2) は, 仮定 III の確認である.
  (3) は, 介入による差を見たいのに両者に差がないことを確認する, というのは一見すると矛盾しているように聞こえるかもしれないが, 仮定 II
- の加法性のもとでは, 両者は平行に推移するはずで, その傾きが大きく変化しないであろう, という前提による.
- よって, CASE 3 のように point-wise effect が徐々に増加するような場合は懐疑的になるべきだろう.
+ の加法性のもとでは, 両者は平行に推移するはずで, その傾きが大きく変化することはないであろう, という前提による.
 \end_layout
 
 \begin_layout Standard
-しかしながら, 
-\begin_inset Formula $\phi_{t}$
+また, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "BrodersenEtAl2015"
+literal "false"
+
 \end_inset
 
- が一定というのもかなり強い仮定である: 
-\begin_inset Formula $\phi_{t}$
-\end_inset
+ も指摘しているように, 施策によるインパクトがすぐに収縮する可能性もあり, その期間がどれくらいかは 
+\family typewriter
+CausalImpact
+\family default
+ は答えてくれない.
+ しかし, 多くの場合は収縮するので, 問題としてはあまり大きなものではないから, 今回はこの話は省略する.
+\end_layout
 
- は時間とともに減衰する可能性がありうる.
- (一般均衡効果とか, 同時決定効果とかいうべき現象) さらには, 仮定 II に由来するのか, 仮定 IV に違反して構造パラメータが変化したことに由来したの
-かを識別することは, シミュレーションではなく正解の伏せられた実データでは一般に困難である.
+\begin_layout Section
+実演
 \end_layout
 
 \begin_layout Standard
-というわけで, お決まりの文句になるが, Causal Impact だろうが何であろうが, 何も考えず絶対にうまくいくフレームワークなどというものは存在しない.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO: T0 で交差するような yt(1), yt(0)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO: 単位根の場合....
+ ありきたりだがモデルの自動選択性能の確認には必要か
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CI がうまく機能しない事例について, シミュレーションによる例を紹介する.
+ シミュレーションであればデータの生成過程を我々は知っているので, CI の推定結果が正確に評価することができる.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+介入後にすぐ構造変化するようなのは逆に都合が良すぎるし, うまく行かない例として自明すぎるので省略
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+CASE 1: チュートリアルの改変
+\end_layout
+
+\begin_layout Standard
+まずは基本モデルとして, チュートリアルに対して少しだけ改変を加えて生成したデータを使う.
+ 
+\begin_inset Formula $t=1$
+\end_inset
+
+ から 
+\begin_inset Formula $t=100$
+\end_inset
+
+ までの 100 期間として, 共変量である 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+ は1階の自己回帰成分 (AR) と非確率的な線形トレンドの和で, 結果変数 
+\begin_inset Formula $y_{t}$
+\end_inset
+
+ は 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+の1次式とする.
+\begin_inset Formula 
+\begin{align*}
+y_{0,t}= & 1.20x_{t}+\eta_{t},\\
+x_{t}= & 0.90x_{t-1}+0.50t+\varepsilon_{t}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $T_{0}=70$
+\end_inset
+
+ で介入し, 介入効果の大きさは 一律で 10 とする.
+ 共変量 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+ の情報を与えて介入効果 
+\begin_inset Formula $\phi_{t}$
+\end_inset
+
+ を推定し, 予測値, pointwise effect (
+\begin_inset Formula $\phi_{t}$
+\end_inset
+
+), 
+\begin_inset Formula $\phi_{t}$
+\end_inset
+
+ の累積値 (cumulative effect) について, 真の値と CI による推定結果の比較を 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:CASE1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ に掲載した.
+ 破線は現実には観測できないはずのデータである.
+ 今回はシミュレーションによる確認のため見ることができるが, 実際の分析作業ではこの値は知ることが出来ない.
+\end_layout
+
+\begin_layout Standard
+CASE 1 は, ほとんどチュートリアルと同じであり, 推定もうまくいっている.
+ 以降, このデータを基本として, どのように変更を加えた場合に が変わるのかを確認していく.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case1_raw.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case1.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CASE 1 の生データ (上段), 推定結果 (下段)
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CASE1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+なお, 
+\family typewriter
+print(, "report")
+\family default
+ や 
+\family typewriter
+summary()
+\family default
+ で数値を表示することもできる.
+ 前者は「レポート」を出力してくれるとあるが, 英語の定型文を出すだけなのであまり役に立たない.
+\end_layout
+
+\begin_layout Subsection
+CASE 2: 介入直後の共変量シフトの発生
+\end_layout
+
+\begin_layout Standard
+次に, 仮定 III の違反として, 介入の直後から共変量シフトを発生させる.
+ 具体的には, 以下のように自己回帰成分をなくす.
+ 介入効果の大きさはそのままである.
+\begin_inset Formula 
+\begin{align*}
+y_{0,t}= & 1.2x_{t}+\eta_{t}\\
+x_{t}= & \begin{cases}
+0.90x_{t-1}+0.50t+\varepsilon_{t} & \text{if }t\leq T_{0}\\
+0.50t+\varepsilon_{t}+x_{70} & \text{if }t\geq T_{0}
+\end{cases}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+これは, 割り当て変数を決める 
+\begin_inset Formula $t$
+\end_inset
+
+ に応じて 
+\begin_inset Formula $x$
+\end_inset
+
+ が変化していることから, 仮定 III を違反したという想定である.
+ 現実にありうるこのタイプの現象は, 施策を受ける側ユーザーが, 施策に反応して KPI に間接的に影響する 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+ を変えたということだろうか.
+ 例えば PV を KPI として, PV を上げようとサイトデザインを変更したところ, ユーザー側は不便に感じ, サイトの利用時間 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+ を減らした, その結果, 間接的に PV が減少した, という例が考えられる.
+\end_layout
+
+\begin_layout Standard
+シミュレーションの結果は 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:CASE2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ のようになった.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case2_raw.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case2.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CASE 2 の生データ (上段), 推定結果 (下段)
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CASE2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+理想的な状況である CASE 1 と同様, 推定結果に大きな誤差がみられない.
+ これは, 共変量シフトに結果が左右されない特殊なケースである.
+ つまり, シフト後の 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+は単に自己回帰成分が消えただけであり, トレンド定常まわりの平均は変わっておらず, また結果変数と共変量は単純な1次式の関係であり, 結局のところ期待値に関して
+言えば変化の影響を受けていないからである (
+\begin_inset Formula $x_{t}$
+\end_inset
+
+の自己回帰成分ではなく, トレンドの傾きのほうを変えれば, 結果は変わってくると予想される.
+ 果たして本当にそうなるかは, 「読者への宿題」とする.).
+ Case 2 は共変量の分布の変化が結果に影響しなかったが, 一般に共変量シフトによってどの程度推定が狂うかはケースバイケースである.
+ 少なくともチェック項目 (2) の, 
+\begin_inset Formula $x$
+\end_inset
+
+ のプロットによる確認は必要である.
+ 次以降でそのような状況を見てみる.
+\end_layout
+
+\begin_layout Subsection
+CASE 3: 非線形性
+\end_layout
+
+\begin_layout Standard
+観測方程式を非線形式に置き換える.
+ つまり, 仮定 II を違反した想定である.
+ 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+ の状態方程式が非線形というのもありうるが, 今回は省略する.
+ 
+\begin_inset Formula 
+\begin{align*}
+y_{0,t}= & 0.01x_{t}^{2}+\eta_{t}\\
+x_{t}= & 0.90x_{t-1}+0.50t+\varepsilon_{t}
+\end{align*}
+
+\end_inset
+
+ベイズ構造時系列モデルは線形状態空間であるので, 非線形な関係から生成されるデータを当てはめると, 平均から離れるほど誤差が大きくなるはずである
+ (テイラー展開).
+ 現実のデータでは, CASE 2 と違い, 一般にこのような単純な一次関係だけで表現できるとは限らない.
+ 例えば, 当初はサービスの利用者数が順調に増えていたが, 人間は有限なので, そのうち伸び悩む (いわゆるサチる).
+ つまり, KPI の変動も単純な直線の式では表現できず, 曲線でなければ適切に表現できないかもしれない.
+\end_layout
+
+\begin_layout Standard
+結果は予想通りで, 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:CASE3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ のように, pointwise effect の推定結果は時間経過に伴って 10 から離れ, 過大推定されていく.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case3-1_raw.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case3-1.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CASE 3 の元データ (上段) と, 推定結果 (下段)
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CASE3"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+なお, さらに介入以降の共変量シフトを加えれば, 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:CASE3-2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ のようにこの差はより顕著になる.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case3-2_raw.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case3-2.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CASE 3-2 の生データ (上段), 推定結果 (下段)
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CASE3-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+チェック項目 (3) では, 介入後の 
+\begin_inset Formula $y_{t}$
+\end_inset
+
+ と予測値が大きくかけ離れていないかを確認する, とあるが, 実際にはどれくらい離れていれば問題かと言うのは難しい.
+ CASE 3 では, cumulative effect が加速的に増加しているように見えるので, かろうじてここから推定結果に問題があることがわかるヒントに
+なるだろう.
+ このような誤りを避けるには, 手動で 
+\family typewriter
+bsts
+\family default
+ モデルの構造を指定したり, 残差プロットで残差に偏りがないかを確認するなど, 地道な試行錯誤が必要になる.
+\end_layout
+
+\begin_layout Standard
+もう1つ, モデルの特定の誤りの例を提示する.
+ 
+\begin_inset Formula $y_{t}$
+\end_inset
+
+ が以下のようにして決まる場合を考える.
+\begin_inset Formula 
+\begin{align*}
+y_{0,t}= & 1.2x_{t}+0.5y_{0,t-1}+0.3y_{0,t-2}+5\sin(2\pi t/10)+\eta
+\end{align*}
+
+\end_inset
+
+これはつまり, CASE 1 に 2階の自己回帰項と, 10期間で1周期になる周期成分を追加したということである.
+ このデータと推定結果をプロットすると 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:CASE3-3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ のようになる.
+ デフォルトの設定では周期成分のあるモデルは使われないため, pointwise effect の推定結果にも周期的なバイアスが発生している.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case3-3_raw.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case3-3.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CASE 3-3 の生データ (上段), 推定結果 (下段) 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CASE3-3"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:CASE3-3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ かあるいは残差をプロットすれば (
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:residualplot"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), データと予測値の間に周期的な誤差が発生しているのが分かる.
+ このように, 周期性があるのが疑わしい, あるいは最初から周期性があると分かっている場合, 手動でモデルを設定することもできる.
+ そこで, 周期成分をモデルに追加したのが 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:CASE3-3-2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ 下段である.
+ さらに自己回帰項も追加した結果が下段だが, かえって過剰適合しているようだ (この解決は読者の課題とする.
+ 時系列モデルをどうするかという話は, 
+\begin_inset CommandInset citation
+LatexCommand citealp
+key "Kitagawa2005"
+literal "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealp
+key "HagiwaraEtAL2018"
+literal "false"
+
+\end_inset
+
+ などを参考に.).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename residuals.png
+	lyxscale 40
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+残差の時系列プロット
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:residualplot"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case3-3_2.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case3-3_3.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+モデルを手動設定した場合の CASE 3-3 の推定結果
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CASE3-3-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+CASE 4: 構造パラメータの変化
+\end_layout
+
+\begin_layout Standard
+仮定 IV が成り立たない場合である.
+ 答えそのものを変えているのだから, 結果は自明なのだが一応掲載しておく.
+ CASE 4 が難しいのは, 表面的には同じような変化に見えても, その原因の識別が難しいことである.
+\end_layout
+
+\begin_layout Standard
+反事実的な結果 
+\begin_inset Formula $y_{0,t}$
+\end_inset
+
+ の構造だけが変化するケース, 
+\begin_inset Formula $y_{1,t}$
+\end_inset
+
+ の構造だけが変化するケース, 両方の構造がそれぞれ同様に変化するケースの3通りがある.
+\end_layout
+
+\begin_layout Standard
+CASE 3 とは対照的に, CASE 4 ではある施策によって ユーザーの行動パターンの KPI に直結する部分が変化するような場合を意味する.
+ 例えば, 自社が取り扱っているある商品 (あるいはサービス) の1つを割引した場合.
+ 割引されたものの需要は増えるかも知れないが, 消費者の財布の中身は有限なので, 代わりに他の割引しなかった他の商品を買い控えるかもしれない.
+ すると, 売上が単純に増加するとも言えなくなる.
+ あるいは, 「増税の駆け込み需要」も, 増税という施策の直後ではなく直前に行動が変化するという違いはあるが, これと同類の問題と言える.
+ このような場合は, どう介入効果を測定するかというよりも, 施策の効果をどう最大化するかという問題のほうが重要だろう.
+\end_layout
+
+\begin_layout Standard
+このケースで結果が歪むのは自明ではあるが, 一応数値実験の例を掲載する.
+ 以下のように, 介入後に構造が変化するケースである.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+y_{1,t}= & \begin{cases}
+1.2x_{t}+\eta_{t} & \text{if }t\leq T_{0}\\
+1.0x_{t}+\phi_{t}+\eta_{t} & \text{if }t>T_{0}
+\end{cases}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+結果は以下の 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:CASE4"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ のようになる.
+ 介入効果を「真の値」よりも過小評価してしまっているが, 一方で介入と同時に発生した
+\begin_inset Formula $y_{t}$
+\end_inset
+
+ の構造変化は, 介入効果の一部ではないかとも考えられる.
+ その点から言えば, これは仮定 I の違反でもある.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case4_raw.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case4.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CASE 4 の結果
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CASE4"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+CASE 5: 非定常分布
+\end_layout
+
+\begin_layout Standard
+時系列データはしばしば非定常である.
+ 反例はなるべくシンプルなものを示すほうが良く, モデルの特定を誤った場合はすでに CASE 3 で示しており蛇足感はある.
+ しかし時系列データというと早押しクイズのように非定常の話をしたがる人は一定数いるし, 非定常な分布の生データは時系列でははよくあるので実用例として書いておく.
+\end_layout
+
+\begin_layout Standard
+既に書いたように, CI はデフォルトでローカルレベルモデルを使用するので, 単純なランダムウォーク成分がある程度では大きな誤差にならない.
+ そこで, CASE 1 の
+\begin_inset Formula $y_{t}$
+\end_inset
+
+にランダムウォーク成分を加えた.
+ 標準的な状態空間表現で書けば,
+\begin_inset Formula 
+\begin{align*}
+y_{0,t}= & 1.20x_{t}+\alpha_{t}+\eta_{t},\\
+x_{t}= & 0.90x_{t-1}+0.50t+\varepsilon_{t},\\
+\alpha_{t}= & \alpha_{t-1}+\zeta_{t}
+\end{align*}
+
+\end_inset
+
+となるデータを生成した.
+ 
+\begin_inset Formula $\zeta_{t}$
+\end_inset
+
+ はホワイトノイズである.
+ CI での推定結果は
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:CASE5"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ の通りである.
+ 残念ながら推定と実際の値にはかなり差がある.
+ 非定常な分布は一般に定常な分布に比べ予測誤差が非常に大きくなるので, 分布を正しく特定できたとしても誤差が大きくなることが多い.
+ CI のチェック項目 (1) や (3) に引っかかることが多いので問題は発見しやすいが, 効果的な対処法がないこともある.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case5_raw.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename case5.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CASE 5 の結果
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CASE5"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+結論
+\end_layout
+
+\begin_layout Standard
+今回は, 因果推論の基本的な考え方を復習した上で, 因果推論に理論的根拠を置く causal impact フレームワークの特性について考えてみた.
+\end_layout
+
+\begin_layout Standard
+Causal impact はユーザーにとって非常に簡単に操作できるフレームワークである.
+ しかし, 推定・推論とは仮説と結果の検証の繰り返しであり, causal impact だろうが何であろうが, スタートボタンを押して後はぼんやり待っているだ
+けで絶対うまくいくフレームワークなどというものは存在しない.
  常に自分自身に対して批判的な姿勢で推論の反証可能性について考える必要がある.
- これは学術研究でなくビジネス場面での活用でも変わらないはずだ.
+ 学術研究とビジネスでは目的は違えど, 意味のある結果を得るためにこれは必要だ.
 \end_layout
 
 \begin_layout Standard
-(もう少しおもしろい発展手法を考えられないかと2週間ほどあれこれいじってみたが, わりと教科書的な内容だけで終わってしまった.)
+(もう少しおもしろい発展的な話題を考えられないかと前々回の Tokyo.R 後 2週間ほどあれこれいじってみたが, わりとありきたりで教科書的な内容になってしまっ
+たので放置していた.
+ 散発的に思いつくことを書いたせいで, むしろ内容を他人が読める文にまとめるのに時間がっかった.)
+\end_layout
+
+\begin_layout Section*
+補足: プログラムについて
+\end_layout
+
+\begin_layout Standard
+Causal impact は R の 
+\family typewriter
+CausalImpact
+\family default
+ パッケージで実装されている
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+非公式だが, Python でも causal impact が作られている (https://github.com/google/CausalImpact/is
+sues/14).
+ ただし, フレームワークを真似ているだけで, 時系列モデルの部分は古典的な statsmodels のものを流用しているだけなので, BSTS
+ は利用できない.
+\end_layout
+
+\end_inset
+
+.
+ ヘルプではデータの入力を 
+\family typewriter
+data.frame
+\family default
+ でも 
+\family typewriter
+xts
+\family default
+ 等の時系列データオブジェクトでも受け付けているのだが, 時間インデックスも同時に扱える時系列オブジェクトのほうが結果の加工が楽なので, そちらを使うことにした.
+ 近年は tidyverse により配列構造のデータ (
+\family typewriter
+data.frame
+\family default
+) の扱いが非常に簡単になったが, 
+\family typewriter
+zoo
+\family default
+, 
+\family typewriter
+xts
+\family default
+ といった時系列データを扱うオブジェクトの操作は昔から変わっていない.
+ 今となっては R の古い構文はとても煩雑で面倒に感じる.
+ 時系列データオブジェクトを tidy に扱うパッケージには, 
+\family typewriter
+tsibble
+\family default
+, 
+\family typewriter
+tidytime
+\family default
+ という2つがあるが, 今回は 
+\family typewriter
+tsibble
+\family default
+ を使った.
+ r-wakalang で教えてもらったところによれば, 
+\family typewriter
+tsibble
+\family default
+ は 
+\family typewriter
+tidyverts
+\family default
+ プロジェクトの一環である.
+\end_layout
+
+\begin_layout Standard
+[https://github.com/tidyverts:embed:title]
+\end_layout
+
+\begin_layout Standard
+[https://tsibble.tidyverts.org/:embed:title]
+\end_layout
+
+\begin_layout Standard
+使い方は簡単で, 
+\family typewriter
+data.frame
+\family default
+ を 
+\family typewriter
+as_tsibble()
+\family default
+ で変換するだけでよい.
+ 時系列データのため, 時間インデックスが必須で, 任意でグループ変数も指定する必要があるが, 
+\family typewriter
+index_by()
+\family default
+ と 
+\family typewriter
+summarise()
+\family default
+ を併用することでサンプリングレートを変更 (時間単位から日単位, 週単位, など) できたり, 
+\family typewriter
+slide()
+\family default
+, 
+\family typewriter
+tile()
+\family default
+, 
+\family typewriter
+stretch()
+\family default
+ などで rolling 集計ができるなど, 時系列データの特有の処理も簡単である.
+ 
+\family typewriter
+filter
+\family default
+, 
+\family typewriter
+select()
+\family default
+, 
+\family typewriter
+mutate()
+\family default
+, 
+\family typewriter
+gather()
+\family default
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+時間 index を - しなくとも残してくれるので便利
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+ 
+\family default
+などの 
+\family typewriter
+dplyr
+\family default
+/
+\family typewriter
+tidyr
+\family default
+ でおなじみの関数もほぼ同じ感覚で使うことができるので, 時刻処理機能の充実した 
+\family typewriter
+lubridate
+\family default
+ などと併用すればだいぶ簡単になるだろう.
+ また, 
+\family typewriter
+forecast
+\family default
+ パッケージの 
+\family typewriter
+acf
+\family default
+ 関数などにもそのまま入力として与えられる.
+ ただし, 
+\series bold
+現状 
+\family typewriter
+ts
+\family default
+ には対応しているものの, 
+\family typewriter
+zoo
+\family default
+/
+\family typewriter
+xts
+\family default
+ との相互変換はサポートしていない
+\series default
+.
+ また, 関数がコンフリクトするので, 
+\family typewriter
+tsibble
+\family default
+ と従来の 
+\family typewriter
+zoo
+\family default
+ などを使った処理を併用するようなプログラムを書く場合は注意が必要である.
+ 
+\end_layout
+
+\begin_layout Standard
+今回は CI にデータを入力するため, 
+\family typewriter
+tsibble
+\family default
+ から 
+\family typewriter
+zoo
+\family default
+ へと変換する簡易的な関数を用意してみた.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+tsibble2zoo <- function(x){
+\end_layout
+
+\begin_layout Plain Layout
+
+  stopifnot(inherits(x, "tbl_ts"))
+\end_layout
+
+\begin_layout Plain Layout
+
+  zoo::read.zoo(dplyr::select(x, index_var(x), everything()))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+zoo2tsibble <- function(x){
+\end_layout
+
+\begin_layout Plain Layout
+
+  stopifnot(inherits(x, "zoo"))
+\end_layout
+
+\begin_layout Plain Layout
+
+  as_tsibble(fortify.zoo(x), index=Index)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+また, モデルを手動で指定して CI に適用する方法についても補足しておく.
+ モデルを変更したい場合, 
+\family typewriter
+CausalImpact()
+\family default
+ の 
+\family typewriter
+model.args 
+\family default
+である程度指定できる.
+ 例えば, CASE 3-3 のように周期成分を追加したい場合, 
+\family typewriter
+nseasons=
+\family default
+ を与えることができる.
+ 詳しい説明はヘルプにあるのでそちらを参照されたい.
+\end_layout
+
+\begin_layout Standard
+model.args で可能な範囲を超える場合, 自分で 状態空間モデルを指定し, 
+\family typewriter
+bsts()
+\family default
+ で計算した結果を 
+\family typewriter
+CausalImpact()
+\family default
+ に与える必要がある.
+ まず, 
+\family typewriter
+bsts
+\family default
+ をでモデルにフィットさせる際は, 介入以降の結果変数を全て 
+\family typewriter
+NA
+\family default
+ に置き換える必要がある.
+ そして 
+\family typewriter
+CausalImpact
+\family default
+ に 
+\family typewriter
+bsts
+\family default
+ オブエジェクトと, 介入後の結果のベクトルを与える.
+ 例えば CASE 3-3 では, 以下のようなプログラムを書いている.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+data3_3_input <- data3_3 %>% mutate(y=if_else(Index %within% pre_span, y,
+ NA_real_))
+\end_layout
+
+\begin_layout Plain Layout
+
+ss3_3 <- list() %>% AddAr(y=data3_3_input$y, lags=2) %>%
+\end_layout
+
+\begin_layout Plain Layout
+
+  AddSeasonal(y=data3_3_input$y, nseasons=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+model3_3 <- bsts(formula=y~x1, state.specification=ss3_3, timestamps=data3_3$Inde
+x,
+\end_layout
+
+\begin_layout Plain Layout
+
+                 data=data3_3_input %>% as_tibble, niter=1000, seed=42)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+impact3_3_mod <- CausalImpact(bsts.model=model3_3, post.period.response=filter(data
+3_3, Index %within% post_span)$y, seed=42)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+今回使ったプログラム全文は以下で公開している.
 \end_layout
 
 \begin_layout Standard
