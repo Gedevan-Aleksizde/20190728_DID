@@ -3809,6 +3809,10 @@ impact3_3_mod <- CausalImpact(bsts.model=model3_3, post.period.response=filter(d
 \end_layout
 
 \begin_layout Standard
+[https://github.com/Gedevan-Aleksizde/20190728_DID:embed:title]
+\end_layout
+
+\begin_layout Standard
 \begin_inset ERT
 status collapsed
 
