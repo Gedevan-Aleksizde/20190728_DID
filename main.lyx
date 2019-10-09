@@ -92,6 +92,21 @@ pdfsubject={},%
 pdfcreator={},%
 pdfproducer={}
 }
+
+\renewcommand{\algorithmname}{プログラム}
+
+% prettyref 用の設定
+\newrefformat{eq}{\textup{(\ref{#1})}}
+\newrefformat{lem}{補題 \ref{#1}}
+\newrefformat{thm}{定理 \ref{#1}}
+\newrefformat{prop}{命題 \ref{#1}}
+\newrefformat{cha}{\ref{#1} 章}
+\newrefformat{sec}{\ref{#1} 節}
+\newrefformat{tab}{表\ref{#1}}
+\newrefformat{fig}{図 \ref{#1}}
+\newrefformat{alg}{プログラム \ref{#1}}
+\newrefformat{tabp}{\pageref{#1} ページの表\ref{#1}}
+\newrefformat{figb}{\pageref{#1} ページの図 \ref{#1}}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -221,7 +236,7 @@ CausalImpact
 \family typewriter
 tsibble
 \family default
- パッケージの使い方とかも少しだけ
+ パッケージの使い方とかも少しだけ触れている.
 \end_layout
 
 \begin_layout Standard
@@ -258,7 +273,7 @@ literal "false"
 
 \begin_layout Standard
 対象読者層は, 企業などで causal impact を使って効果測定をしている人達だろうか.
- なるべく技術的に細かい話は避け, 要点をよく強調して説明したつもりだが, まったくの初心者にとってはもしかすると難しいかも知れないということを留意してほしい.
+ 大まかな要約と, 技術的に細かいパートをなるべく切り離し, 要点をよく強調して説明したつもりだが, まったくの初心者にとってはもしかすると難しいかも知れない.
 \end_layout
 
 \begin_layout Section
@@ -278,9 +293,17 @@ literal "false"
  で以下のような発表をした.
 \end_layout
 
-\begin_layout Standard
-[https://speakerdeck.com/ktgrstsh/relation-between-econometrics-and-machine-learn
-ing-ai-is-the-plan-the-plan-is-counterfactual:embed:title]
+\begin_layout Itemize
+『
+\begin_inset CommandInset href
+LatexCommand href
+name "計量経済学と機械学習の関係 ‒AI はさだめ, さだめは反事実的‒"
+target "https://speakerdeck.com/ktgrstsh/relation-between-econometrics-and-machine-learning-ai-is-the-plan-the-plan-is-counterfactual"
+literal "false"
+
+\end_inset
+
+』
 \end_layout
 
 \begin_layout Standard
@@ -301,8 +324,16 @@ CausalImpact
 ントのインパクト」の大きさを測るためのツールである.
 \end_layout
 
-\begin_layout Standard
-[https://github.com/google/CausalImpact:embed:title]
+\begin_layout Itemize
+\begin_inset CommandInset href
+LatexCommand href
+name "google/CausalImpact"
+target "https://github.com/google/CausalImpact"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -311,13 +342,28 @@ CausalImpact のしくみを, 日本語で簡単に解説した資料はすで�
  いわゆる因果推論の話を少し勉強した人ならば, これらを読んだだけでも何をやっているか察せると思う.
 \end_layout
 
-\begin_layout Standard
-[http://www.housecat442.com/?p=657:embed:title]
+\begin_layout Itemize
+\begin_inset CommandInset href
+LatexCommand href
+name "機械学習で広告の効果を推定したいお話。 | 分析のおはなし。"
+target "http://www.housecat442.com/?p=657"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
-\begin_layout Standard
-[https://www.slideshare.net/YusukeKaneko6/did-synthetic-control-causalimpact:embed
-:title]
+\begin_layout Itemize
+\begin_inset CommandInset href
+LatexCommand href
+name "DID, Synthetic Control, CausalImpact"
+target "https://www.slideshare.net/YusukeKaneko6/did-synthetic-control-causalimpact"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -330,8 +376,16 @@ CausalImpact のしくみを, 日本語で簡単に解説した資料はすで�
 \end_layout
 
 \begin_layout Standard
-また, この記事によって, はるか昔, [http://ill-identified.hatenablog.com/entry/2014/12/07/160009:
-title=2014年に書いた記事]での「今回は DID については書かないが, 暇があれば書く.」という伏線を回収した.
+また, この記事によって, はるか昔, 
+\begin_inset CommandInset href
+LatexCommand href
+name "2014年に書いた記事"
+target "http://ill-identified.hatenablog.com/entry/2014/12/07/160009"
+literal "false"
+
+\end_inset
+
+での「今回は DID については書かないが, 暇があれば書く.」という伏線を回収した.
 \end_layout
 
 \begin_layout Standard
@@ -339,8 +393,16 @@ title=2014年に書いた記事]での「今回は DID については書かな�
  しかし, よく読んだら私の主題とあまりかぶってなかったのでこのまま投稿することにする.
 \end_layout
 
-\begin_layout Standard
-[https://tjo.hatenablog.com/entry/2019/09/10/080000:embed:title]
+\begin_layout Itemize
+\begin_inset CommandInset href
+LatexCommand href
+name "{CausalImpact}を使う上での注意点を簡単にまとめてみた"
+target "https://tjo.hatenablog.com/entry/2019/09/10/080000"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -385,7 +447,7 @@ status collapsed
  (BSTS; Bayesian Structural Time Series), 最後に Causal Impact の仕組みを再度, 定式化して説明する.
  この辺は適当にごまかして説明することもできるので, 
 \series bold
-Causal Impact の実用上の話を知りたいだけならば, それ以前の箇所は飛ばしても問題ない
+Causal Impact の実用上の話を知りたいだけならば, 4節まで飛ばしても問題ない
 \series default
 .
 \end_layout
@@ -1421,7 +1483,11 @@ y_{i,t}:= & \delta_{t}+\boldsymbol{z}_{i}^{\top}\boldsymbol{\theta}_{t}+\boldsym
 
  の内積である.
  添字の通り, 共変量は個体ごとには異なるが, 時間に対して一定であり, 係数は時間に対して変化しうる.
- 第3項の
+ 
+\end_layout
+
+\begin_layout Standard
+第3項の
 \begin_inset Formula $\boldsymbol{\mu}_{i}^{\top}\boldsymbol{\lambda}_{t}$
 \end_inset
 
@@ -1500,7 +1566,10 @@ literal "false"
  計量経済学の研究テーマは, 交絡効果の扱いがかなりの割合を占める.
  よって, 単純ではあるが (もちろん適切な仮定をおけばここから非線形モデルに拡張することもできるだろう), 観察データから介入効果を測定する際に重要な仮定が揃
 っている.
- 第4項はいわゆる誤差項で, ここでは 
+\end_layout
+
+\begin_layout Standard
+第4項はいわゆる誤差項で, ここでは 
 \begin_inset Formula $i,t$
 \end_inset
 
@@ -1818,16 +1887,31 @@ literal "false"
  で提案され, R をインターフェースとした実装が用意されている.
 \end_layout
 
-\begin_layout Standard
-[https://github.com/cran/bsts:embed:title]
+\begin_layout Itemize
+\begin_inset CommandInset href
+LatexCommand href
+name "cran/bsts"
+target "https://github.com/cran/bsts"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 詳しくは上記の論文か, 私が過去に書いたものを参考にしてほしい.
 \end_layout
 
-\begin_layout Standard
-[http://ill-identified.hatenablog.com/entry/2017/09/08/001002:embed:title]
+\begin_layout Itemize
+\begin_inset CommandInset href
+LatexCommand href
+target "http://ill-identified.hatenablog.com/entry/2017/09/08/001002"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1953,7 +2037,17 @@ bsts の出力する予測値は確定的な値ではなく, 予測分布に基�
 \begin_inset Formula $\phi_{t}$
 \end_inset
 
- の累積や平均を計算するなどして, いろいろな方法で期間中の「施策によるインパクトの大きさ」を評価することができる.
+ の累積や平均を計算するなどして, いろいろな方法で期間中の「施策によるインパクトの大きさ」を評価することができる (
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:causalimpact"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -1987,6 +2081,13 @@ causal impact フレームワーク.
 \end_inset
 
 とその累積 (下段) 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:causalimpact"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -2156,8 +2257,16 @@ status collapsed
 \family typewriter
 CausalImpact
 \family default
- の [https://github.com/google/CausalImpact/blob/60759074a6d909875d064c837495ba80e
-1417b01/R/impact_model.R#L162:title=ソースコード] によれば, モデルの自動選択をしてくれるわけではない.
+ の 
+\begin_inset CommandInset href
+LatexCommand href
+name "ソースコード"
+target "https://github.com/google/CausalImpact/blob/60759074a6d909875d064c837495ba80e1417b01/R/impact_model.R#L162"
+literal "false"
+
+\end_inset
+
+によれば, モデルの自動選択をしてくれるわけではない.
  特に指定をしない場合, 時系列モデルには季節周期成分すらなく,
 \series bold
  最も単純な種類のモデルの1つである, ローカルレベルモデルが採用される
@@ -2178,9 +2287,12 @@ literal "false"
 
 \end_inset
 
- には, ヒントが書かれている.
- 部分識別 (partial identification) やバウンド識別というのは, 推定したいパラメータの理論上の上下界 (バウンド) を特定するというア
-プローチである.
+ によれば, 
+\series bold
+部分識別
+\series default
+ (partial identification) やバウンド識別というのは, 推定したいパラメータの理論上の上下界 (バウンド) を特定するというアプローチで
+ある.
  多くの統計的/機械学習的モデルでは様々な仮定を課して計算しているが, 部分識別は逆にまったく仮定を課さない状態から仮定を追加すると, 推定値のバウンドがどう変
 化するかを検証するという方法論であり, 定性的な仮定と, 定量的なバウンドの識別との対応関係を知ることができる.
  つまり, 従来の統計学や機械学習でなされる点推定とは全く違うアプローチである.
@@ -2270,8 +2382,8 @@ literal "false"
 .
 \end_layout
 
-\begin_layout Enumerate
-(加法性) 介入効果は介入時の結果変数と, 反事実的な非介入時の結果変数の差である.
+\begin_layout Description
+I (加法性) 介入効果は介入時の結果変数と, 反事実的な非介入時の結果変数の差である.
 \begin_inset Formula 
 \begin{align*}
 \phi_{t}:= & y_{1,t}-y_{0,t}
@@ -2282,12 +2394,12 @@ literal "false"
 
 \end_layout
 
-\begin_layout Enumerate
-(BSTS の自由度) Causal Impact で表現できるのは線形状態空間モデル + ベイズモデル平均法 (BMA) の範囲である.
+\begin_layout Description
+II (BSTS の自由度) Causal Impact で表現できるのは線形状態空間モデル + ベイズモデル平均法 (BMA) の範囲である.
 \end_layout
 
-\begin_layout Enumerate
-(無作為性) 共変量 
+\begin_layout Description
+III (無作為性) 共変量 
 \begin_inset Formula $X_{t}$
 \end_inset
 
@@ -2306,8 +2418,8 @@ D(t)\perp & X_{t}
 
 \end_layout
 
-\begin_layout Enumerate
-(構造の定常性) 介入の前後で真のモデルの構造パラメータが変化しない.
+\begin_layout Description
+IV (構造の定常性) 介入の前後で真のモデルの構造パラメータが変化しない.
 \end_layout
 
 \begin_layout Standard
@@ -2409,12 +2521,46 @@ status open
 \end_layout
 
 \begin_layout Standard
-CI が適正に使われているかを確認する方法として, 公式ドキュメントでは, "[https://google.github.io/CausalImpact/Caus
-alImpact.html#faq:title=How can I check whether the model assumptions are
- fulfilled?]" というセクションで, 結果の sanity check について言及している.
+CI が適正に使われているかを確認する方法として, 公式ドキュメントでは, 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset CommandInset href
+LatexCommand href
+name "How can I check whether the model assumptions are fulfilled?"
+target "[https://google.github.io/CausalImpact/CausalImpact.html#ふぁ1"
+literal "false"
+
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ というセクションで, 結果の sanity check について言及している.
 \end_layout
 
 \begin_layout Standard
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
 First of all, it is critical to reason why the covariates that are included
  in the model (this was x1 in the example) were not themselves affected
  by the intervention.
@@ -2426,6 +2572,11 @@ First of all, it is critical to reason why the covariates that are included
  intervention.
  We would expect not to find a significant effect, i.e., counterfactual estimates
  and actual data should agree reasonably closely.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2877,7 +3028,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-CASE 3 の元データ (上段) と, 推定結果 (下段)
+CASE 3 の生データ (上段) と, 推定結果 (下段)
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:CASE3"
@@ -3091,7 +3242,7 @@ noprefix "false"
 
 \end_inset
 
- 下段である.
+ 上段である.
  さらに自己回帰項も追加した結果が下段だが, かえって過剰適合しているようだ (この解決は読者の課題とする.
  時系列モデルをどうするかという話は, 
 \begin_inset CommandInset citation
@@ -3434,21 +3585,24 @@ name "fig:CASE5"
 \end_layout
 
 \begin_layout Standard
-今回は, 因果推論の基本的な考え方を復習した上で, 因果推論に理論的根拠を置く causal impact フレームワークの特性について考えてみた.
+今回は, 因果推論の基本的な考え方を復習した上で, 因果推論に理論的根拠を置く causal impact フレームワークの特性について考えた.
 \end_layout
 
 \begin_layout Standard
 Causal impact はユーザーにとって非常に簡単に操作できるフレームワークである.
- しかし, 推定・推論とは仮説と結果の検証の繰り返しであり, causal impact だろうが何であろうが, スタートボタンを押して後はぼんやり待っているだ
-けで絶対うまくいくフレームワークなどというものは存在しない.
+ しかし, 今回の複数のケースで挙げたように, 必ずしも結果が信頼できるとは限らない.
+ 推定・推論とは仮説と結果の検証の繰り返しであり, causal impact だろうが何であろうが, スタートボタンを押して後はぼんやり待っているだけで絶対う
+まくいくフレームワークなどというものは存在しない.
  常に自分自身に対して批判的な姿勢で推論の反証可能性について考える必要がある.
- 学術研究とビジネスでは目的は違えど, 意味のある結果を得るためにこれは必要だ.
+ 学術研究とビジネスでは目的は違えど, 意味のある結果が要求されるのは同じだろう.
 \end_layout
 
 \begin_layout Standard
 (もう少しおもしろい発展的な話題を考えられないかと前々回の Tokyo.R 後 2週間ほどあれこれいじってみたが, わりとありきたりで教科書的な内容になってしまっ
-たので放置していた.
- 散発的に思いつくことを書いたせいで, むしろ内容を他人が読める文にまとめるのに時間がっかった.)
+たので2ヶ月も放置していた.
+ 散発的に思いつくことを書いたせいで, むしろ内容を他人が読める文にまとめるのに時間がかかった.
+ あとはてなブログの構文に書き換えるのがとてもしんどい.
+ 今度から pdf だけ貼り付けてしまいたい.)
 \end_layout
 
 \begin_layout Section*
@@ -3465,8 +3619,18 @@ CausalImpact
 status collapsed
 
 \begin_layout Plain Layout
-非公式だが, Python でも causal impact が作られている (https://github.com/google/CausalImpact/is
-sues/14).
+非公式だが, Python でも causal impact が作られている (
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/google/CausalImpact/issues/14
+\end_layout
+
+\end_inset
+
+).
  ただし, フレームワークを真似ているだけで, 時系列モデルの部分は古典的な statsmodels のものを流用しているだけなので, BSTS
  は利用できない.
 \end_layout
@@ -3521,12 +3685,32 @@ tidyverts
  プロジェクトの一環である.
 \end_layout
 
-\begin_layout Standard
-[https://github.com/tidyverts:embed:title]
+\begin_layout Itemize
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/tidyverts
 \end_layout
 
-\begin_layout Standard
-[https://tsibble.tidyverts.org/:embed:title]
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://tsibble.tidyverts.org
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3646,14 +3830,30 @@ zoo
 \family typewriter
 tsibble
 \family default
- から 
+ と 
 \family typewriter
 zoo
 \family default
- へと変換する簡易的な関数を用意してみた.
+ を相互に変換する簡易的な関数を用意してみた (
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "alg:tsibblezoo"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \begin_inset listings
 inline false
 status open
@@ -3700,6 +3900,38 @@ zoo2tsibble <- function(x){
 \begin_layout Plain Layout
 
 }
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\family typewriter
+tsibble
+\family default
+/
+\family typewriter
+zoo
+\family default
+ の相互変換
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:tsibblezoo"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -3754,10 +3986,26 @@ CausalImpact
 bsts
 \family default
  オブエジェクトと, 介入後の結果のベクトルを与える.
- 例えば CASE 3-3 では, 以下のようなプログラムを書いている.
+ 例えば CASE 3-3 では, 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "alg:CausalImpactbsts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+のように書いている.
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \begin_inset listings
 inline false
 status open
@@ -3804,12 +4052,50 @@ impact3_3_mod <- CausalImpact(bsts.model=model3_3, post.period.response=filter(d
 
 \end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\family typewriter
+CausalImpact
+\family default
+ とのモデル変更の例
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:CausalImpactbsts"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 今回使ったプログラム全文は以下で公開している.
 \end_layout
 
-\begin_layout Standard
-[https://github.com/Gedevan-Aleksizde/20190728_DID:embed:title]
+\begin_layout Itemize
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/Gedevan-Aleksizde/20190728_DID
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
