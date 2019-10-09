@@ -8,7 +8,6 @@
 \begin_preamble
 \usepackage{float}
 \usepackage{dcolumn}
-\usepackage{enumerate}
 \usepackage{url}
 \usepackage{multicol}
 \usepackage{boites}
@@ -112,6 +111,7 @@ pdfproducer={}
 \begin_modules
 theorems-bytype
 theorems-sec-bytype
+enumitem
 \end_modules
 \maintain_unincluded_children false
 \begin_local_layout
@@ -2382,8 +2382,37 @@ literal "false"
 .
 \end_layout
 
-\begin_layout Description
-I (加法性) 介入効果は介入時の結果変数と, 反事実的な非介入時の結果変数の差である.
+\begin_layout Enumerate
+
+\lang british
+\begin_inset Argument 1
+status collapsed
+
+\begin_layout Plain Layout
+
+\lang british
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+labelindent=
+\backslash
+parindent,leftmargin=*,label=
+\backslash
+Roman*.,widest=IV,align=left 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\lang japanese
+(加法性) 介入効果は介入時の結果変数と, 反事実的な非介入時の結果変数の差である.
 \begin_inset Formula 
 \begin{align*}
 \phi_{t}:= & y_{1,t}-y_{0,t}
@@ -2394,12 +2423,12 @@ I (加法性) 介入効果は介入時の結果変数と, 反事実的な非介�
 
 \end_layout
 
-\begin_layout Description
-II (BSTS の自由度) Causal Impact で表現できるのは線形状態空間モデル + ベイズモデル平均法 (BMA) の範囲である.
+\begin_layout Enumerate
+(BSTS の自由度) Causal Impact で表現できるのは線形状態空間モデル + ベイズモデル平均法 (BMA) の範囲である.
 \end_layout
 
-\begin_layout Description
-III (無作為性) 共変量 
+\begin_layout Enumerate
+(無作為性) 共変量 
 \begin_inset Formula $X_{t}$
 \end_inset
 
@@ -2418,8 +2447,8 @@ D(t)\perp & X_{t}
 
 \end_layout
 
-\begin_layout Description
-IV (構造の定常性) 介入の前後で真のモデルの構造パラメータが変化しない.
+\begin_layout Enumerate
+(構造の定常性) 介入の前後で真のモデルの構造パラメータが変化しない.
 \end_layout
 
 \begin_layout Standard
