@@ -76,21 +76,21 @@ showspaces=true,% 連続ブランクをそのまま表示する
 showstringspaces=true % ブランクの存在を記号で表す
 }
 
-\usepackage[xetex] {hyperref}
-\hypersetup{
-unicode=true,%
-bookmarks=true,%
-bookmarksnumbered=true,%bookmark available
-bookmarksopen=true,bookmarksopenlevel=1,%
-breaklinks=false,%
-pdfborder={0 0 0},%
-backref=false,colorlinks=false,%
-pdftitle={},%
-pdfauthor={},%
-pdfsubject={},%
-pdfcreator={},%
-pdfproducer={}
-}
+%\usepackage[xetex] {hyperref}
+%\hypersetup{
+%unicode=true,%
+%bookmarks=true,%
+%bookmarksnumbered=true,%bookmark available
+%bookmarksopen=true,bookmarksopenlevel=1,%
+%breaklinks=false,%
+%pdfborder={0 0 0},%
+%backref=false,colorlinks=false,%
+%pdftitle={},%
+%pdfauthor={},%
+%pdfsubject={},%
+%pdfcreator={},%
+%pdfproducer={}
+%}
 
 \renewcommand{\algorithmname}{プログラム}
 
@@ -161,7 +161,18 @@ End
 \index_command default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_title "CausalImpact にできること, できないこと"
+\pdf_author "ill-identified"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize default
 \use_geometry false
 \use_package amsmath 1
@@ -1243,41 +1254,6 @@ DID は, 処置群・対照群は介入効果を除いて, 全く同じ外部要
  
 \end_layout
 
-\begin_layout Paragraph
-\begin_inset Note Note
-status open
-
-\begin_layout Paragraph
-時系列と DID 
-\end_layout
-
-\begin_layout Plain Layout
-本来の DID では, 原則として2時点間の差分だけを扱うが, これ以降の説明のため, 時系列の時点を増やしても同様に扱えるということを補足しておく.
- 当初の DID では, 
-\begin_inset Formula $t=1$
-\end_inset
-
- つまり処置後の効果を見ていたが, さらに 
-\begin_inset Formula $t=2,t=3$
-\end_inset
-
- と処置が続くような場合を想定してみる.
-\begin_inset Formula $t=2,3,\cdots$
-\end_inset
-
- の各時点での介入効果もまた, それぞれの差分をとることで計算できる.
- 
-\begin_inset Formula $\Delta\bar{y}_{2}(1):=\bar{y}_{2}(1)-\bar{y}_{1}(1),\Delta\bar{y}_{3}(1):=\bar{y}_{3}(1)-\bar{y}_{2}(1),\cdots\Delta y_{t}(D):=\bar{y}_{t}(D)-\bar{y}_{t-1}(D)$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsection
 シンセティック統制法 (Synthetic Control Method)
 \end_layout
@@ -1361,70 +1337,8 @@ SC 法では,
 \end_layout
 
 \begin_layout Standard
-DID では単純に処置群・対照群の差分でs求めた ATT を介入効果として推定する方法だったが,
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-しかし既に説明したように, これは普通観測できないので, DID では異なる個体で比較することになる.
- DID が二度差分を取るのは, 個体間の差を打ち消すためである.
- Rubin の定義と整合することを確認しておこう.
- 割り当て変数 
-\begin_inset Formula $D$
-\end_inset
-
-を使って,
-\begin_inset Formula 
-\begin{align*}
-y_{1,t}:= & Dy_{1,t}(1)-(1-D)y_{1,t}(0)
-\end{align*}
-
-\end_inset
-
-と表せるから, これを変形して,
-\begin_inset Formula 
-\begin{align*}
-y_{1,t}:= & y_{1,t}(0)+\tau_{1,t}D_{i}
-\end{align*}
-
-\end_inset
-
-となることで確認できた.
- なおここでは, 
-\begin_inset Formula $j=1$
-\end_inset
-
- が処置群, それ以外を対照群と固定しているので, 
-\series bold
-以降は断りがない限り
-\series default
- 
-\begin_inset Formula $y_{1,t}(1)=y_{1,t},y_{j,t}(0)=y_{j,t}$
-\end_inset
-
- と省略する.
-\end_layout
-
-\begin_layout Plain Layout
-しかし, 
-\begin_inset Formula $j=1$
-\end_inset
-
- は処置群なので, 
-\begin_inset Formula $y_{1,t}(1)$
-\end_inset
-
- は観察できても 
-\begin_inset Formula $y_{1,t}(0)$
-\end_inset
-
- は絶対に観察できない.
- 
-\end_layout
-
-\end_inset
-
-SC 法では 先に挙げた批判を解消するため, 複数の対照群から擬似的に処置群の 
+DID では単純に処置群・対照群の差分でs求めた ATT を介入効果として推定する方法だったが, SC 法では 先に挙げた批判を解消するため,
+ 複数の対照群から擬似的に処置群の 
 \begin_inset Formula $y_{0,t}(1)$
 \end_inset
 
@@ -2383,14 +2297,10 @@ literal "false"
 \end_layout
 
 \begin_layout Enumerate
-
-\lang british
 \begin_inset Argument 1
 status collapsed
 
 \begin_layout Plain Layout
-
-\lang british
 \begin_inset ERT
 status open
 
@@ -2400,7 +2310,7 @@ labelindent=
 \backslash
 parindent,leftmargin=*,label=
 \backslash
-Roman*.,widest=IV,align=left 
+Roman*.,widest=IV,align=left
 \end_layout
 
 \end_inset
@@ -2410,8 +2320,6 @@ Roman*.,widest=IV,align=left
 
 \end_inset
 
-
-\lang japanese
 (加法性) 介入効果は介入時の結果変数と, 反事実的な非介入時の結果変数の差である.
 \begin_inset Formula 
 \begin{align*}
@@ -2505,48 +2413,6 @@ D(t)\perp & X_{t}
  によるものなのか (たとえば, 一般均衡効果とか, 同時決定効果とかいうべき現象によって起こる) の識別は, 答え合わせのできるシミュレーションでのみ検証可能
 なことが多く, 正解のわからない実データに当てはめる場合は困難であることが多い (例えばスイッチモデルとみなせば, パラメトリックなモデルでも表現できるため).
  
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-仮定 IV が成り立たないケースをさらに分類すると, 介入後の反事実的な結果 
-\begin_inset Formula $y_{0,t}$
-\end_inset
-
- の構造だけが変化するケース, 観測できる
-\begin_inset Formula $y_{1,t}$
-\end_inset
-
- の構造だけが変化するケース, 両方の構造がそれぞれ同様に変化するケースの3通りがある.
- このうち, 
-\begin_inset Formula $y_{1,t}$
-\end_inset
-
- だけが変化する場合は, 介入効果と外部要因の切り分けができなくなるが, 差を測ること自体はできる.
- 
-\begin_inset Formula $y_{1,t}$
-\end_inset
-
-だけが変化する場合, それは 
-\begin_inset Formula $\phi_{t}$
-\end_inset
-
- に吸収されるため, 介入効果として測定できる.
- ただし, 必ずしもそれが抜き出したかった介入効果だけを表しているとは言えないかもしれない.
- 介入後の観測できない
-\begin_inset Formula $y_{0,t}$
-\end_inset
-
-の値が変化するようなケースでは, そもそもどう変わるかがわからない.
- 
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -2661,48 +2527,8 @@ CausalImpact
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO: T0 で交差するような yt(1), yt(0)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO: 単位根の場合....
- ありきたりだがモデルの自動選択性能の確認には必要か
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 CI がうまく機能しない事例について, シミュレーションによる例を紹介する.
  シミュレーションであればデータの生成過程を我々は知っているので, CI の推定結果が正確に評価することができる.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-介入後にすぐ構造変化するようなのは逆に都合が良すぎるし, うまく行かない例として自明すぎるので省略
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
